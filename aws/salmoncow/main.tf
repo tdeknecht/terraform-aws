@@ -16,8 +16,12 @@ locals {
         "us-east-1a" = "10.0.3.0/24",
         "us-east-1b" = "10.0.4.0/24"
     }
-}
 
+    tags = {
+        deployment  = "terraform"
+    }
+}
+/*
 resource "aws_vpc" "salmoncow" {
     cidr_block = "10.0.0.0/16"
 
@@ -26,16 +30,24 @@ resource "aws_vpc" "salmoncow" {
         deployment = "terraform"
     }
 }
+*/
+module "vpc" {
+    source = "../modules/vpc/"
 
-resource "aws_subnet" "private" {
-    for_each            = local.private_subnets
+    cidr_block = "10.0.0.0/16"
 
-    vpc_id              = aws_vpc.salmoncow.id
-    availability_zone   = each.key
-    cidr_block          = each.value
+    name = local.name
+    tags = local.tags
+}
 
-    tags = {
-        Name = "${local.name}-${each.key}-private-subnet",
-        deployment = "terraform"
-    }
+module "subnets" {
+    source = "../modules/subnets/"
+
+    vpc_id = module.vpc.vpc_id
+
+    private_subnets = local.private_subnets
+    public_subnets  = local.public_subnets
+
+    name = local.name
+    tags = local.tags
 }
