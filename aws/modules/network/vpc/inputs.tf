@@ -7,6 +7,16 @@ variable cidr_block {
     type            = string
 }
 
+variable private_subnets {
+    description     = "map of private subnets"
+    type            = map(string)
+}
+
+variable public_subnets {
+    description     = "map of public subnets"
+    type            = map(string)
+}
+
 variable name {
     description     = "global name"
     type            = string

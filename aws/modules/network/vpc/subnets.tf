@@ -2,10 +2,10 @@
 # Create subnets
 # ******************************************************************************
 
-resource "aws_subnet" "private" {
+resource "aws_subnet" "private_subnet" {
     for_each            = var.private_subnets
 
-    vpc_id              = var.vpc_id
+    vpc_id              = aws_vpc.vpc.id
     availability_zone   = each.key
     cidr_block          = each.value
 
@@ -15,10 +15,10 @@ resource "aws_subnet" "private" {
     )
 }
 
-resource "aws_subnet" "public" {
+resource "aws_subnet" "public_subnet" {
     for_each            = var.public_subnets
 
-    vpc_id              = var.vpc_id
+    vpc_id              = aws_vpc.vpc.id
     availability_zone   = each.key
     cidr_block          = each.value
 

@@ -13,7 +13,7 @@ locals {
 }
 
 # ******************************************************************************
-# Create vpc
+# Create vpc and all necessary networking components
 # ******************************************************************************
 module "vpc" {
     source = "../modules/network/vpc/"
@@ -22,15 +22,8 @@ module "vpc" {
 
     name = local.name
     tags = local.tags
-}
 
-# ******************************************************************************
 # Create subnets
-# ******************************************************************************
-module "subnets" {
-    source = "../modules/network/subnets/"
-
-    vpc_id = module.vpc.vpc_id
 
     private_subnets = {
         "us-east-1a" = "10.0.1.0/24",
@@ -42,21 +35,6 @@ module "subnets" {
         "us-east-1b" = "10.0.4.0/24"
     }
 
-    name = local.name
-    tags = local.tags
-}
-
-# ******************************************************************************
 # Create route tables, routes, and association or route tables to subnets
-# ******************************************************************************
 
-module "route_tables" {
-    source = "../modules/network/route_tables"
-
-    vpc_id          = module.vpc.vpc_id
-    private_subnets = module.subnets.private_subnet_ids
-    public_subnets  = module.subnets.public_subnet_ids
-
-    name = local.name
-    tags = local.tags
 }

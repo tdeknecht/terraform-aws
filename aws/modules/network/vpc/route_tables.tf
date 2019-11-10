@@ -2,8 +2,8 @@
 # Create route tables
 # ******************************************************************************
 
-resource "aws_route_table" "private" {
-    vpc_id = var.vpc_id
+resource "aws_route_table" "private_rt" {
+    vpc_id = aws_vpc.vpc.id
 
     tags = merge(
         {Name = "${var.name}-private-rt"},
@@ -11,8 +11,8 @@ resource "aws_route_table" "private" {
     )
 }
 
-resource "aws_route_table" "public" {
-    vpc_id = var.vpc_id
+resource "aws_route_table" "public_rt" {
+    vpc_id = aws_vpc.vpc.id
 
     tags = merge(
         {Name = "${var.name}-public-rt"},
@@ -24,10 +24,10 @@ resource "aws_route_table" "public" {
 # Create routes
 # ******************************************************************************
 
-# todo:
+# TODO
 
 # ******************************************************************************
 # Associate route tables with subnets
 # ******************************************************************************
 
-# TODO: ddd
+# TODO
