@@ -15,6 +15,7 @@ locals {
 # ******************************************************************************
 # Create vpc and all necessary networking components
 # ******************************************************************************
+
 module "vpc" {
     source = "../modules/network/vpc/"
 
@@ -35,6 +36,6 @@ module "vpc" {
         "us-east-1b" = "10.0.4.0/24"
     }
 
-# Create route tables, routes, and association or route tables to subnets
+# Create route tables, routes, and association of route tables to subnets
 
 }
