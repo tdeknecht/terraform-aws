@@ -8,12 +8,12 @@ variable vpc_id {
 }
 
 variable private_subnets {
-    description     = "private subnets"
+    description     = "map of private subnets"
     type            = map(string)
 }
 
 variable public_subnets {
-    description     = "public subnets"
+    description     = "map of public subnets"
     type            = map(string)
 }
 
