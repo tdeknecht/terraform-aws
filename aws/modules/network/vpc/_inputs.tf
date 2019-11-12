@@ -10,11 +10,13 @@ variable cidr_block {
 variable private_subnets {
     description     = "map of private subnets"
     type            = map(string)
+    default         = {}
 }
 
 variable public_subnets {
     description     = "map of public subnets"
     type            = map(string)
+    default         = {}
 }
 
 variable name {
