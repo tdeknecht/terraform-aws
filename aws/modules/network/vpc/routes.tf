@@ -12,7 +12,6 @@ resource "aws_default_route_table" "private_rt" {
     )
 }
 
-
 resource "aws_route_table" "public_rt" {
     vpc_id = aws_vpc.vpc.id
 
