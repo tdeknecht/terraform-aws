@@ -2,7 +2,7 @@
 # Create route tables
 # ******************************************************************************
 
-# The VPC Default route table will be used as the private_rt, and is declared as Main
+# The VPC Default route table will be used as the private_rt and is declared as Main
 resource "aws_default_route_table" "private_rt" {
     default_route_table_id = aws_vpc.vpc.default_route_table_id
 
@@ -27,6 +27,7 @@ resource "aws_route_table" "public_rt" {
 
 # Create routes for private (main) route table
 /*
+# Create route for NAT Gateway
 resource "aws_route" "private_rt_natgw_route" {
     route_table_id          = aws_vpc.vpc.main_route_table_id
     destination_cidr_block  = "0.0.0.0/0"
@@ -34,7 +35,10 @@ resource "aws_route" "private_rt_natgw_route" {
 }
 */
 
+
+
 # Create routes for public route table
+# Create routes for public route tables to igw
 resource "aws_route" "public_rt_igw_route" {
     route_table_id          = aws_route_table.public_rt.id
     destination_cidr_block  = "0.0.0.0/0"
