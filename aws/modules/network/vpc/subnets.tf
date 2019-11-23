@@ -10,7 +10,10 @@ resource "aws_subnet" "private_subnet" {
     cidr_block          = each.value
 
     tags = merge(
-        {Name = "${var.name}-${each.key}-private-subnet"},
+        {
+            Name = "${var.name}-${each.key}-private-subnet",
+            network = "private"
+        },
         var.tags
     )
 }
@@ -23,7 +26,10 @@ resource "aws_subnet" "public_subnet" {
     cidr_block          = each.value
 
     tags = merge(
-        {Name = "${var.name}-${each.key}-public-subnet"},
+        {
+            Name = "${var.name}-${each.key}-public-subnet",
+            network = "public"
+        },
         var.tags
     )
 }

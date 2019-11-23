@@ -15,7 +15,7 @@ variable private_subnets {
 
 variable public_subnets {
     description     = "map of public subnets"
-    type            = map(string)
+    #type            = map(string) # BUG: If I define the type, it populates the variable with unknowns and counteracts by boolean logic
     default         = {}
 }
 
