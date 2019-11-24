@@ -23,11 +23,11 @@ output "public_subnet_ids" {
 output "private_rt_id" {
     value = aws_vpc.vpc.default_route_table_id
 }
-/*
+
 output "public_rt_id" {
-    value = aws_route_table.public_rt[0].id
+    value = aws_route_table.public_rt.*.id
 }
-*/
+
 output "igw_id" {
-    value = [aws_internet_gateway.igw.*.id]
+    value = aws_internet_gateway.igw.*.id
 }

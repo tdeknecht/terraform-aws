@@ -2,6 +2,7 @@
 # Create subnets
 # ******************************************************************************
 
+# Private subnets
 resource "aws_subnet" "private_subnet" {
     for_each            = var.private_subnets
 
@@ -18,6 +19,7 @@ resource "aws_subnet" "private_subnet" {
     )
 }
 
+# Public subnets
 resource "aws_subnet" "public_subnet" {
     for_each            = var.public_subnets
 
