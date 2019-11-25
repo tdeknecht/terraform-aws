@@ -4,7 +4,7 @@
 
 locals {
     is_public = var.public_subnets != {} ? true : false
-    #is_public = var.public_subnets != {} ? toset(["igw"]) : []
+    #is_public = var.public_subnets != {} ? {"region_" = "vpcname_"} : {}
 
 }
 
