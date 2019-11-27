@@ -25,5 +25,8 @@ output "private_rt_id" {
 }
 
 output "public_rt_id" {
-    value = aws_route_table.public_rt[data.aws_region.current.name].id
+    value = [
+        for cidr, region in var.is_public:
+            aws_route_table.public_rt[cidr].id
+    ]
 }

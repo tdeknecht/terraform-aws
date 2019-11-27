@@ -29,7 +29,7 @@ resource "aws_route_table" "public_rt" {
     vpc_id = aws_vpc.vpc.id
 
     tags = merge(
-        {Name = "${var.name}-${var.ou}-public-rt"},
+        {Name = "${var.name}-${var.ou}-${each.value}-public-rt"},
         var.tags
     )
 }
@@ -38,35 +38,27 @@ resource "aws_route_table" "public_rt" {
 # Create routes
 # ******************************************************************************
 
-cidr_blocks = [
-  for num in var.subnet_numbers:
-  cidrsubnet(data.aws_vpc.example.cidr_block, 8, num)
-]
-
 # Create routes for private route tables
-# Create route for NAT Gateways in each public subnet
+# Create routes for private subnets to nat gws located in public subnets
 resource "aws_route" "route_to_natgw" {
     for_each = var.public_subnets
 
-    #route_table_id         = aws_route_table.private_rt[each.key].id
-    route_table_id = [
-        for subnet, az in var.private_subnets:
+    /* NOTE: Using zipmap here requires equal numbers of public and private subnets, or this will fail */
+    route_table_id         = aws_route_table.private_rt[zipmap(keys(var.public_subnets), keys(var.private_subnets))[each.key]].id
 
-    ]
     destination_cidr_block = "0.0.0.0/0"
     nat_gateway_id         = aws_nat_gateway.nat_gw[each.key].id
 }
-/*
-# Create routes for public route table
-# Create routes for public route tables to igw
-resource "aws_route" "route_to_igw" {
-    count = var.public_subnets != {} ? 1 : 0
-    #for_each = local.is_public
 
-    route_table_id          = aws_route_table.public_rt.*.id[0]
+# Create routes for public route table
+# Create routes for public subnets to igw
+resource "aws_route" "route_to_igw" {
+    for_each = local.is_public
+
+    route_table_id          = aws_route_table.public_rt[each.key].id
     destination_cidr_block  = "0.0.0.0/0"
-    gateway_id              = aws_internet_gateway.igw.*.id[0]
-} */
+    gateway_id              = aws_internet_gateway.igw[each.key].id
+}
 # ******************************************************************************
 # Associate subnets with route tables
 # ******************************************************************************
@@ -84,5 +76,5 @@ resource "aws_route_table_association" "public_rt_assoc" {
     for_each        = aws_subnet.public_subnet
 
     subnet_id       = aws_subnet.public_subnet[each.key].id
-    route_table_id  = aws_route_table.public_rt[data.aws_region.current.name].id
+    route_table_id  = aws_route_table.public_rt[var.cidr_block].id
 }
