@@ -2,10 +2,11 @@
 # Create VPC, IGW, NAT GW
 # ******************************************************************************
 
-locals {
-    is_public = var.public_subnets != {} ? true : false
-    #is_public = var.public_subnets != {} ? {"region_" = "vpcname_"} : {}
+data "aws_region" "current" {}
 
+locals {
+    # Create a new map that behaves similar to the old method using count as a flag. This time it has a name, and is not a count index.
+    is_public = var.public_subnets != {} ? { (data.aws_region.current.name) = var.name } : {}
 }
 
 resource "aws_vpc" "vpc" {
@@ -18,13 +19,12 @@ resource "aws_vpc" "vpc" {
 }
 
 resource "aws_internet_gateway" "igw" {
-    count = local.is_public ? 1 : 0
-    #for_each = local.is_public
+    for_each = local.is_public
 
     vpc_id = aws_vpc.vpc.id
 
     tags = merge(
-        {Name = "${var.name}-igw"},
+        {Name = "${var.name}-${var.ou}-igw"},
         var.tags
     )
 }

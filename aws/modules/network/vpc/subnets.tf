@@ -7,12 +7,12 @@ resource "aws_subnet" "private_subnet" {
     for_each            = var.private_subnets
 
     vpc_id              = aws_vpc.vpc.id
-    availability_zone   = each.key
-    cidr_block          = each.value
+    availability_zone   = each.value
+    cidr_block          = each.key
 
     tags = merge(
         {
-            Name = "${var.name}-${each.key}-private-subnet",
+            Name = "${var.name}-${var.ou}-${each.value}-private-subnet",
             network = "private"
         },
         var.tags
@@ -24,12 +24,12 @@ resource "aws_subnet" "public_subnet" {
     for_each            = var.public_subnets
 
     vpc_id              = aws_vpc.vpc.id
-    availability_zone   = each.key
-    cidr_block          = each.value
+    availability_zone   = each.value
+    cidr_block          = each.key
 
     tags = merge(
         {
-            Name = "${var.name}-${each.key}-public-subnet",
+            Name = "${var.name}-${var.ou}-${each.value}-public-subnet",
             network = "public"
         },
         var.tags
