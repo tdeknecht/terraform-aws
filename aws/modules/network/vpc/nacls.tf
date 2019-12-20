@@ -3,6 +3,7 @@
 # ******************************************************************************
 
 # Default Network ACL
+/* TODO: move your private NACL up here to default. No reason not to. */
 resource "aws_default_network_acl" "nacl_default" {
     default_network_acl_id = aws_vpc.vpc.default_network_acl_id
 
