@@ -16,6 +16,23 @@ locals {
     is_public = local.public_subnets != {} ? { (data.aws_region.current.name) = local.name } : {}
 
     nat_routes = tostring(zipmap(keys(local.public_subnets), keys(local.private_subnets))["10.0.3.0/24"])
+
+
+    # ---------------------------------------------------
+    build_vpn = true
+    cgw_ids = ["cgw-id001", "cgw-id002"]
+    vpn_connections = 4
+
+    listmap = local.build_vpn ? [
+        for cgw in local.cgw_ids: {
+            for vpns in range(local.vpn_connections):
+                format("%s-vpn-%s", cgw, vpns) => cgw
+        }
+    ] : []
+
+    map = merge(local.listmap...)
+    # ---------------------------------------------------
 }
 
-output "nat_routes" { value = local.nat_routes }
+#output "nat_routes" { value = local.nat_routes }
+output "map" { value = local.map }
