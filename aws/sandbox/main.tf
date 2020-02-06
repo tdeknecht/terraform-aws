@@ -31,6 +31,19 @@ locals {
     ] : []
 
     map = merge(local.listmap...)
+
+    /* OUTPUTS:
+    map = {
+        "cgw-id001-vpn-0" = "cgw-id001"
+        "cgw-id001-vpn-1" = "cgw-id001"
+        "cgw-id001-vpn-2" = "cgw-id001"
+        "cgw-id001-vpn-3" = "cgw-id001"
+        "cgw-id002-vpn-0" = "cgw-id002"
+        "cgw-id002-vpn-1" = "cgw-id002"
+        "cgw-id002-vpn-2" = "cgw-id002"
+        "cgw-id002-vpn-3" = "cgw-id002"
+    }   
+    */
     # ---------------------------------------------------
 }
 
