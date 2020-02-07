@@ -2,12 +2,23 @@
 # Create route tables
 # ******************************************************************************
 
-# The VPC Default route table will be used as the private_rt and is declared as Main
+# TODO: The VPC Default route table will be used as the public_rt and is declared as Main
 resource "aws_default_route_table" "default_rt" {
     default_route_table_id = aws_vpc.vpc.default_route_table_id
 
     tags = merge(
-        {Name = "${var.name}-default-rt"},
+        {Name = "${var.name}-${var.ou}-default-rt"},
+        var.tags
+    )
+}
+
+resource "aws_route_table" "public_rt" {
+    for_each = local.is_public
+
+    vpc_id = aws_vpc.vpc.id
+
+    tags = merge(
+        {Name = "${var.name}-${var.ou}-${each.value}-public-rt"},
         var.tags
     )
 }
@@ -18,19 +29,7 @@ resource "aws_route_table" "private_rt" {
     vpc_id = aws_vpc.vpc.id
 
     tags = merge(
-        {Name = "${var.name}-${each.key}-private-rt"},
-        var.tags
-    )
-}
-
-resource "aws_route_table" "public_rt" {
-    count = local.is_public == true ? 1 : 0
-    #for_each = local.is_public
-
-    vpc_id = aws_vpc.vpc.id
-
-    tags = merge(
-        {Name = "${var.name}-public-rt"},
+        {Name = "${var.name}-${var.ou}-${each.value}-private-rt"},
         var.tags
     )
 }
@@ -40,24 +39,25 @@ resource "aws_route_table" "public_rt" {
 # ******************************************************************************
 
 # Create routes for private route tables
-# Create route for NAT Gateways in each public subnet
+# Create routes for private subnets to nat gws located in public subnets
 resource "aws_route" "route_to_natgw" {
     for_each = var.public_subnets
 
-    route_table_id         = aws_route_table.private_rt[each.key].id
+    /* NOTE: Using zipmap here requires equal numbers of public and private subnets, or this will fail */
+    route_table_id         = aws_route_table.private_rt[zipmap(keys(var.public_subnets), keys(var.private_subnets))[each.key]].id
+
     destination_cidr_block = "0.0.0.0/0"
     nat_gateway_id         = aws_nat_gateway.nat_gw[each.key].id
 }
 
 # Create routes for public route table
-# Create routes for public route tables to igw
+# Create routes for public subnets to igw
 resource "aws_route" "route_to_igw" {
-    count = local.is_public == true ? 1 : 0
-    #for_each = local.is_public
+    for_each = local.is_public
 
-    route_table_id          = aws_route_table.public_rt.*.id[0]
+    route_table_id          = aws_route_table.public_rt[each.key].id
     destination_cidr_block  = "0.0.0.0/0"
-    gateway_id              = aws_internet_gateway.igw.*.id[0]
+    gateway_id              = aws_internet_gateway.igw[each.key].id
 }
 # ******************************************************************************
 # Associate subnets with route tables
@@ -76,5 +76,5 @@ resource "aws_route_table_association" "public_rt_assoc" {
     for_each        = aws_subnet.public_subnet
 
     subnet_id       = aws_subnet.public_subnet[each.key].id
-    route_table_id  = aws_route_table.public_rt.*.id[0]
+    route_table_id  = aws_route_table.public_rt[var.cidr_block].id
 }

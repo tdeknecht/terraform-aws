@@ -8,15 +8,15 @@ output "vpc_id" {
 
 output "private_subnet_ids" {
     value = [
-        for region, subnet in var.private_subnets:
-            aws_subnet.private_subnet[region].id
+        for subnet, az in var.private_subnets:
+            aws_subnet.private_subnet[subnet].id
     ]
 }
 
 output "public_subnet_ids" {
     value = [
-        for region, subnet in var.public_subnets:
-            aws_subnet.public_subnet[region].id
+        for subnet, az in var.public_subnets:
+            aws_subnet.public_subnet[subnet].id
     ]
 }
 
@@ -25,9 +25,8 @@ output "private_rt_id" {
 }
 
 output "public_rt_id" {
-    value = aws_route_table.public_rt.*.id
-}
-
-output "igw_id" {
-    value = aws_internet_gateway.igw.*.id
+    value = [
+        for cidr, region in local.is_public:
+            aws_route_table.public_rt[cidr].id
+    ]
 }

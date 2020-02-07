@@ -19,6 +19,11 @@ variable public_subnets {
     default         = {}
 }
 
+variable ou {
+    description     = "organizational unit identifier"
+    type            = string
+}
+
 variable name {
     description     = "global name"
     type            = string
