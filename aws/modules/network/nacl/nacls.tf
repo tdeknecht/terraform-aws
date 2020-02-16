@@ -2,29 +2,30 @@
 # Create Network ACLs
 # ******************************************************************************
 
-# Default Network ACL
-/* TODO: move your private NACL up here to default. No reason not to. */
-resource "aws_default_network_acl" "nacl_default" {
-    default_network_acl_id = aws_vpc.vpc.default_network_acl_id
-
-    # No rules defined, block all ingress and egress
-
-    tags = merge(
-        {Name = "${var.name}-${var.ou}-default-nacl"},
-        var.tags
-    )
+data "aws_vpc" "this_vpc" {
+    id = var.vpc_id
 }
+
+# Default Network ACL
+# TODO: move your private NACL up here to default. No reason not to. */
+# resource "aws_default_network_acl" "nacl_default" {
+#     default_network_acl_id = aws_vpc.vpc.default_network_acl_id
+
+#     # No rules defined, block all ingress and egress
+
+#     tags = merge(
+#         {Name = "${var.name}-${var.ou}-default-nacl"},
+#         var.tags
+#     )
+# }
 
 # Custom Network ACL
 resource "aws_network_acl" "nacl_private" {
-    vpc_id      = aws_vpc.vpc.id
-    subnet_ids  = [
-        for subnet, az in var.private_subnets:
-            aws_subnet.private_subnet[subnet].id
-    ]
+    vpc_id      = data.aws_vpc.this_vpc.id
+    subnet_ids  = var.private_subnet_ids
 
     tags = merge(
-        {Name = "${var.name}-${var.ou}-private-nacl"},
+        { Name = "${var.name}-${var.ou}-private-nacl" },
         var.tags
     )
 
