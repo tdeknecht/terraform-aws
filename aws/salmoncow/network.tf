@@ -1,22 +1,8 @@
-provider "aws" {
-    region = "us-east-1"
-
-    profile = "default"
-}
-
-locals {
-    ou = "test"
-
-    tags = {
-        deployment  = "terraform"
-        owner       = "salmoncow"
-    }
-}
-
 # ******************************************************************************
-# Create vpc and all necessary networking components
+# VPC modules start here
 # ******************************************************************************
 
+# Create VPC
 module "vpc-one" {
     source = "../modules/network/vpc/"
     ou     = local.ou
@@ -33,6 +19,7 @@ module "vpc-one" {
     /* NOTE: The code for public_subnets and NAT GWs is bound together. If I wanted to deploy more than one NAT GW per public subnet, I can't do that right now. I can achieve greater flexibility in my NAT GW deployments if I make that its own module. */
 }
 
+# Create VPC NACLs
 module "vpc-one-nacl" {
     source = "../modules/network/nacl/"
     ou     = local.ou
@@ -42,7 +29,3 @@ module "vpc-one-nacl" {
     vpc_id              = module.vpc-one.vpc_id
     private_subnet_ids  = module.vpc-one.private_subnet_ids
 }
-
-output "vpc_id" { value = module.vpc-one.vpc_id }
-output "private_subnet_ids" { value = module.vpc-one.private_subnet_ids }
-output "public_subnet_ids"  { value = module.vpc-one.public_subnet_ids }
