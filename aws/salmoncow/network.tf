@@ -11,8 +11,7 @@ module "vpc-one" {
 
     cidr_block      = "10.0.0.0/16"
 
-    /* TODO: Instead fo using the account based AZs, I could use the actual AZ ID so you can more precisely place your subnets */
-    private_subnets = { "10.0.0.0/24" = "us-east-1a", "10.0.1.0/24" = "us-east-1b" }
+    private_subnets = { "10.0.0.0/24" = "us-east-1a", "10.0.1.0/24" = "us-east-1b" } # TODO: allow literal AZ as well as logical (default)
     # public_subnets  = { "10.0.2.0/24" = "us-east-1a", "10.0.3.0/24" = "us-east-1b" }
     # internal_subnets = { "100.64.0.0/14" = "us-east-1a" } # TODO: Add this
 
@@ -26,6 +25,7 @@ module "vpc-one-nacl" {
     name   = "salmoncow"
     tags   = local.tags
 
-    vpc_id              = module.vpc-one.vpc_id
-    private_subnet_ids  = module.vpc-one.private_subnet_ids
+    vpc_id                  = module.vpc-one.vpc_id
+    default_network_acl_id  = module.vpc-one.default_network_acl_id
+    private_subnet_ids      = module.vpc-one.private_subnet_ids
 }

@@ -7,6 +7,10 @@ variable vpc_id {
     type            = string
 }
 
+variable default_network_acl_id {
+    description     = "default VPC nacl"
+}
+
 variable private_subnet_ids {
     description     = "list of private subnets"
     default         = []

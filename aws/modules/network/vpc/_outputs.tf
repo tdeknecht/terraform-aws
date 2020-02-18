@@ -6,6 +6,10 @@ output "vpc_id" {
     value = aws_vpc.vpc.id
 }
 
+output "default_network_acl_id" {
+    value = aws_vpc.vpc.default_network_acl_id
+}
+
 output "private_subnet_ids" {
     value = [
         for subnet, az in var.private_subnets:
