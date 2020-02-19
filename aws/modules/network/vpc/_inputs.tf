@@ -3,33 +3,36 @@
 # ******************************************************************************
 
 variable cidr_block {
-    description     = "VPC CIDR"
-    type            = string
-}
-
-variable private_subnets {
-    description     = "map of private subnets"
-    type            = map(string)
-    default         = {}
-}
-
-variable public_subnets {
-    description     = "map of public subnets"
-    #type            = map(string) # BUG: If I define the type, it populates the variable with unknowns and counteracts by boolean logic
-    default         = {}
+    description = "VPC CIDR"
 }
 
 variable ou {
-    description     = "organizational unit identifier"
-    type            = string
+    description = "organizational unit identifier"
 }
 
 variable name {
-    description     = "global name"
-    type            = string
+    description = "global name"
 }
 
 variable tags {
-    description     = "resource tags"
-    type            = map(string)
+    description = "resource tags"
+}
+
+# ******************************************************************************
+# Optional inputs
+# ******************************************************************************
+
+variable nat_gw {
+    description = "A bool to identify whether NAT GWs should be created in each public subnet"
+    default     =  false
+}
+
+variable private_subnets {
+    description = "map of private subnets"
+    default     = {}
+}
+
+variable public_subnets {
+    description = "map of public subnets"
+    default     = {}
 }

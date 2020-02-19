@@ -1,7 +1,3 @@
-# ******************************************************************************
-# Create VPC, IGW, NAT GW
-# ******************************************************************************
-
 data "aws_region" "current" {}
 
 locals {
@@ -9,14 +5,63 @@ locals {
     is_public = var.public_subnets != {} ? { (var.cidr_block) = data.aws_region.current.name } : {}
 }
 
+# ******************************************************************************
+# VPC
+# ******************************************************************************
+
+# Create VPC (https://www.terraform.io/docs/providers/aws/r/vpc.html)
 resource "aws_vpc" "vpc" {
     cidr_block = var.cidr_block
 
     tags = merge(
-        {Name = var.name},
+        { Name = var.name },
         var.tags
     )
 }
+
+# ******************************************************************************
+# Subnets
+# ******************************************************************************
+
+# Private subnets
+resource "aws_subnet" "private_subnet" {
+    for_each                = var.private_subnets
+
+    vpc_id                  = aws_vpc.vpc.id
+    availability_zone       = each.value
+    # availability_zone_id    = each.value
+    cidr_block              = each.key
+
+    tags = merge(
+        {
+            Name = "${var.name}-${var.ou}-${each.value}-private-subnet",
+            network = "private"
+        },
+        var.tags
+    )
+}
+
+# Public subnets
+resource "aws_subnet" "public_subnet" {
+    for_each            = var.public_subnets
+
+    vpc_id                  = aws_vpc.vpc.id
+    availability_zone       = each.value
+    # availability_zone_id    = each.value
+    cidr_block              = each.key
+
+    tags = merge(
+        {
+            Name = "${var.name}-${var.ou}-${each.value}-public-subnet",
+            network = "public"
+        },
+        var.tags
+    )
+}
+
+# ******************************************************************************
+# IGW
+# ******************************************************************************
 
 resource "aws_internet_gateway" "igw" {
     for_each = local.is_public
@@ -24,10 +69,14 @@ resource "aws_internet_gateway" "igw" {
     vpc_id = aws_vpc.vpc.id
 
     tags = merge(
-        {Name = "${var.name}-${var.ou}-igw"},
+        { Name = "${var.name}-${var.ou}-igw" },
         var.tags
     )
 }
+
+# ******************************************************************************
+# NAT GW
+# ******************************************************************************
 
 resource "aws_eip" "nat_gw_eip" {
     for_each = var.public_subnets

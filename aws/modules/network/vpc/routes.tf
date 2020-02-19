@@ -1,5 +1,5 @@
 # ******************************************************************************
-# Create route tables
+# Route Tables
 # ******************************************************************************
 
 # TODO: The VPC Default route table will be used as the public_rt and is declared as Main
@@ -35,7 +35,7 @@ resource "aws_route_table" "private_rt" {
 }
 
 # ******************************************************************************
-# Create routes
+# Routes
 # ******************************************************************************
 
 # Create routes for private route tables
