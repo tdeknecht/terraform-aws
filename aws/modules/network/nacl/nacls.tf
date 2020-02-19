@@ -38,6 +38,19 @@ resource "aws_network_acl" "nacl_private" {
 
 }
 
+# Public Network ACL
+
+resource "aws_network_acl" "nacl_public" {
+    vpc_id      = var.vpc_id
+    subnet_ids  = var.public_subnet_ids
+
+    tags = merge(
+        { Name = "${var.name}-${var.ou}-public-nacl" },
+        var.tags
+    )
+
+}
+
 # ******************************************************************************
 # Create Network ACLs: INBOUND
 # ******************************************************************************

@@ -2,7 +2,8 @@ data "aws_region" "current" {}
 
 locals {
     # Create a new map that behaves similar to the old method using count as a flag. This time it has a name, and is not a count index.
-    is_public = var.public_subnets != {} ? { (var.cidr_block) = data.aws_region.current.name } : {}
+    public_vpc     = var.public_subnets != {} ? { (var.cidr_block) = data.aws_region.current.name } : {}
+    public_subnets = var.nat_gw ? var.public_subnets : {}
 }
 
 # ******************************************************************************
@@ -64,7 +65,7 @@ resource "aws_subnet" "public_subnet" {
 # ******************************************************************************
 
 resource "aws_internet_gateway" "igw" {
-    for_each = local.is_public
+    for_each = local.public_vpc
 
     vpc_id = aws_vpc.vpc.id
 
@@ -79,11 +80,11 @@ resource "aws_internet_gateway" "igw" {
 # ******************************************************************************
 
 resource "aws_eip" "nat_gw_eip" {
-    for_each = var.public_subnets
+    for_each = local.public_subnets
 }
 
 resource "aws_nat_gateway" "nat_gw" {
-    for_each = var.public_subnets
+    for_each = local.public_subnets
 
     depends_on = [aws_internet_gateway.igw[0]]
 

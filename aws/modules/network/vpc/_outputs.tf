@@ -30,7 +30,7 @@ output "private_rt_id" {
 
 output "public_rt_id" {
     value = [
-        for cidr, region in local.is_public:
+        for cidr, region in local.public_vpc:
             aws_route_table.public_rt[cidr].id
     ]
 }

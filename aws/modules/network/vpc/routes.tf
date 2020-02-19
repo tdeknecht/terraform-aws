@@ -13,7 +13,7 @@ resource "aws_default_route_table" "default_rt" {
 }
 
 resource "aws_route_table" "public_rt" {
-    for_each = local.is_public
+    for_each = local.public_vpc
 
     vpc_id = aws_vpc.vpc.id
 
@@ -41,7 +41,7 @@ resource "aws_route_table" "private_rt" {
 # Create routes for private route tables
 # Create routes for private subnets to nat gws located in public subnets
 resource "aws_route" "route_to_natgw" {
-    for_each = var.public_subnets
+    for_each = local.public_subnets
 
     /* NOTE: Using zipmap here requires equal numbers of public and private subnets, or this will fail */
     route_table_id         = aws_route_table.private_rt[zipmap(keys(var.public_subnets), keys(var.private_subnets))[each.key]].id
@@ -53,7 +53,7 @@ resource "aws_route" "route_to_natgw" {
 # Create routes for public route table
 # Create routes for public subnets to igw
 resource "aws_route" "route_to_igw" {
-    for_each = local.is_public
+    for_each = local.public_vpc
 
     route_table_id          = aws_route_table.public_rt[each.key].id
     destination_cidr_block  = "0.0.0.0/0"
