@@ -5,7 +5,7 @@
 # Create VPC
 module "vpc-one" {
     source = "../modules/network/vpc/"
-    
+
     ou     = local.ou
     name   = "salmoncow"
     tags   = local.tags
@@ -14,6 +14,8 @@ module "vpc-one" {
 
     private_subnets = { "10.0.0.0/24" = "us-east-1a", "10.0.1.0/24" = "us-east-1b" } # TODO: allow literal AZ as well as logical (default)
     public_subnets  = { "10.0.2.0/24" = "us-east-1a", "10.0.3.0/24" = "us-east-1b" }
+
+    # nat_gw = true
 
     # internal_subnets = { "100.64.0.0/14" = "us-east-1a" } # TODO: Add this
 

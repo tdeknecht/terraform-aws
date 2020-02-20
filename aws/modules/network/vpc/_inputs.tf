@@ -36,3 +36,8 @@ variable public_subnets {
     description = "map of public subnets"
     default     = {}
 }
+
+variable internal_subnets {
+    description = "map of internal subnets, generally used for EKS"
+    default     = {}
+}

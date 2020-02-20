@@ -60,6 +60,24 @@ resource "aws_subnet" "public_subnet" {
     )
 }
 
+# Internal subnets
+resource "aws_subnet" "internal_subnet" {
+    for_each            = var.internal_subnets
+
+    vpc_id                  = aws_vpc.vpc.id
+    availability_zone       = each.value
+    # availability_zone_id    = each.value
+    cidr_block              = each.key
+
+    tags = merge(
+        {
+            Name = "${var.name}-${var.ou}-${each.value}-internal-subnet",
+            network = "internal"
+        },
+        var.tags
+    )
+}
+
 # ******************************************************************************
 # IGW
 # ******************************************************************************
