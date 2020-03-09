@@ -7,7 +7,7 @@ resource "aws_default_route_table" "default_rt" {
     default_route_table_id = aws_vpc.vpc.default_route_table_id
 
     tags = merge(
-        {Name = "${var.name}-${var.ou}-default-rt"},
+        { Name = "${var.use_case}-${var.ou}-default-rt" },
         var.tags
     )
 }
@@ -18,7 +18,7 @@ resource "aws_route_table" "public_rt" {
     vpc_id = aws_vpc.vpc.id
 
     tags = merge(
-        {Name = "${var.name}-${var.ou}-${each.value}-public-rt"},
+        { Name = "${var.use_case}-${var.ou}-${each.value}-public-rt" },
         var.tags
     )
 }
@@ -29,7 +29,7 @@ resource "aws_route_table" "private_rt" {
     vpc_id = aws_vpc.vpc.id
 
     tags = merge(
-        {Name = "${var.name}-${var.ou}-${each.value}-private-rt"},
+        { Name = "${var.use_case}-${var.ou}-${each.value}-private-rt" },
         var.tags
     )
 }

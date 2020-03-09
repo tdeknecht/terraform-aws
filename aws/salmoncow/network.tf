@@ -1,14 +1,14 @@
 # ******************************************************************************
-# VPC modules start here
+# VPC construct
 # ******************************************************************************
 
 # Create VPC
-module "vpc-one" {
-    source = "../modules/network/vpc/"
+module "vpc_one" {
+    source = "../modules/network/vpc_init/"
 
-    ou     = local.ou
-    name   = "salmoncow"
-    tags   = local.tags
+    ou       = local.ou
+    use_case = local.use_case
+    tags     = local.tags
 
     cidr_block      = "10.0.0.0/16"
 
@@ -23,16 +23,16 @@ module "vpc-one" {
 }
 
 # Create VPC NACLs
-module "vpc-one-nacl" {
+module "vpc_one_nacl" {
     source = "../modules/network/nacl/"
 
-    ou     = local.ou
-    name   = "salmoncow"
-    tags   = local.tags
+    ou       = local.ou
+    use_case = local.use_case
+    tags     = local.tags
 
-    vpc_id                  = module.vpc-one.vpc_id
-    default_network_acl_id  = module.vpc-one.default_network_acl_id
+    vpc_id                  = module.vpc_one.vpc_id
+    default_network_acl_id  = module.vpc_one.default_network_acl_id
     
-    private_subnet_ids      = module.vpc-one.private_subnet_ids
-    public_subnet_ids       = module.vpc-one.public_subnet_ids
+    private_subnet_ids      = module.vpc_one.private_subnet_ids
+    public_subnet_ids       = module.vpc_one.public_subnet_ids
 }

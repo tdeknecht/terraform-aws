@@ -39,7 +39,7 @@ resource "aws_default_network_acl" "nacl_default" {
     # }
 
     tags = merge(
-        { Name = "${var.name}-${var.ou}-default-nacl" },
+        { Name = "${var.use_case}-${var.ou}-default-nacl" },
         var.tags
     )
 }
@@ -51,7 +51,7 @@ resource "aws_network_acl" "nacl_private" {
     subnet_ids  = var.private_subnet_ids
 
     tags = merge(
-        { Name = "${var.name}-${var.ou}-private-nacl" },
+        { Name = "${var.use_case}-${var.ou}-private-nacl" },
         var.tags
     )
 
@@ -64,7 +64,7 @@ resource "aws_network_acl" "nacl_public" {
     subnet_ids  = var.public_subnet_ids
 
     tags = merge(
-        { Name = "${var.name}-${var.ou}-public-nacl" },
+        { Name = "${var.use_case}-${var.ou}-public-nacl" },
         var.tags
     )
 

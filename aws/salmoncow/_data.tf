@@ -9,7 +9,8 @@ provider "aws" {
 }
 
 locals {
-    ou = "test"
+    ou       = "test"
+    use_case = "salmoncow"
 
     tags = {
         deployment  = "terraform"

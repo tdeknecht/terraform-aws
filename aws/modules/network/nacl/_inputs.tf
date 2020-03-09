@@ -6,6 +6,7 @@ variable vpc_id {
     description     = "VPC ID"
 }
 
+# TODO: I won't always want to pass in the default network acl ID. I want this module to be dynamic.
 variable default_network_acl_id {
     description     = "default VPC nacl"
 }
@@ -24,8 +25,8 @@ variable ou {
     description     = "organizational unit identifier"
 }
 
-variable name {
-    description     = "global name"
+variable use_case {
+    description     = "global use case name"
 }
 
 variable tags {

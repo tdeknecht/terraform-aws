@@ -1,5 +1,5 @@
 # ******************************************************************************
-# Create Security Groups
+# Global data
 # ******************************************************************************
 
-# default_security_group_id - The ID of the security group created by default on VPC creation
+data "aws_region" "current" {}

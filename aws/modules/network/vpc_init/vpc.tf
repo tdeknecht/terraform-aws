@@ -1,5 +1,3 @@
-data "aws_region" "current" {}
-
 locals {
     # Create a new map that behaves similar to the old method using count as a flag. This time it has a name, and is not a count index.
     public_vpc     = var.public_subnets != {} ? { (var.cidr_block) = data.aws_region.current.name } : {}
@@ -15,7 +13,7 @@ resource "aws_vpc" "vpc" {
     cidr_block = var.cidr_block
 
     tags = merge(
-        { Name = var.name },
+        { Name = "${var.use_case}-${var.ou}-${data.aws_region.current.name}" },
         var.tags
     )
 }
@@ -35,7 +33,7 @@ resource "aws_subnet" "private_subnet" {
 
     tags = merge(
         {
-            Name = "${var.name}-${var.ou}-${each.value}-private-subnet",
+            Name = "${var.use_case}-${var.ou}-${each.value}-private-subnet",
             network = "private"
         },
         var.tags
@@ -53,7 +51,7 @@ resource "aws_subnet" "public_subnet" {
 
     tags = merge(
         {
-            Name = "${var.name}-${var.ou}-${each.value}-public-subnet",
+            Name = "${var.use_case}-${var.ou}-${each.value}-public-subnet",
             network = "public"
         },
         var.tags
@@ -71,7 +69,7 @@ resource "aws_subnet" "internal_subnet" {
 
     tags = merge(
         {
-            Name = "${var.name}-${var.ou}-${each.value}-internal-subnet",
+            Name = "${var.use_case}-${var.ou}-${each.value}-internal-subnet",
             network = "internal"
         },
         var.tags
@@ -88,7 +86,7 @@ resource "aws_internet_gateway" "igw" {
     vpc_id = aws_vpc.vpc.id
 
     tags = merge(
-        { Name = "${var.name}-${var.ou}-igw" },
+        { Name = "${var.use_case}-${var.ou}-igw" },
         var.tags
     )
 }

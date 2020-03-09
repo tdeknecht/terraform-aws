@@ -10,8 +10,8 @@ variable ou {
     description = "organizational unit identifier"
 }
 
-variable name {
-    description = "global name"
+variable use_case {
+    description = "global use case name"
 }
 
 variable tags {
