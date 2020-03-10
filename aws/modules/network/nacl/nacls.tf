@@ -6,44 +6,6 @@ data "aws_vpc" "this_vpc" {
     id = var.vpc_id
 }
 
-# Default Network ACL (https://www.terraform.io/docs/providers/aws/r/default_network_acl.html)
-
-# When Terraform first adopts the Default Network ACL, it immediately removes all rules in 
-# the ACL. It then proceeds to create any rules specified in the configuration. This step 
-# is required so that only the rules specified in the configuration are created.
-
-# This resource treats its inline rules as absolute; only the rules defined inline are 
-# created, and any additions/removals external to this resource will result in diffs being 
-# shown. For these reasons, this resource is incompatible with the aws_network_acl_rule resource.
-
-resource "aws_default_network_acl" "nacl_default" {
-    default_network_acl_id = var.default_network_acl_id
-
-    # Example in-line: 
-    # ingress {
-    #     protocol   = -1
-    #     rule_no    = 100
-    #     action     = "allow"
-    #     cidr_block = # set a CIDR block here
-    #     from_port  = 0
-    #     to_port    = 0
-    # }
-
-    # egress {
-    #     protocol   = -1
-    #     rule_no    = 100
-    #     action     = "allow"
-    #     cidr_block = "0.0.0.0/0"
-    #     from_port  = 0
-    #     to_port    = 0
-    # }
-
-    tags = merge(
-        { Name = "${var.use_case}-${var.ou}-default-nacl" },
-        var.tags
-    )
-}
-
 # Private Network ACL (https://www.terraform.io/docs/providers/aws/r/network_acl.html)
 
 resource "aws_network_acl" "nacl_private" {
