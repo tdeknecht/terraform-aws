@@ -4,18 +4,18 @@
 
 # Create VPC
 module "vpc_one" {
-    source = "../modules/network/vpc_init/"
+    source = "../modules/network/vpc/vpc_init/"
 
-    ou       = local.ou
-    use_case = local.use_case
-    tags     = local.tags
+    ou        = local.ou
+    use_case  = local.use_case
+    tags      = local.tags
 
     cidr_block      = "10.0.0.0/16"
 
     private_subnets = { "10.0.0.0/24" = "us-east-1a", "10.0.1.0/24" = "us-east-1b" } # TODO: allow literal AZ as well as logical (default)
     public_subnets  = { "10.0.2.0/24" = "us-east-1a", "10.0.3.0/24" = "us-east-1b" }
 
-    # nat_gw = true
+    # nat_gw = true   # A flag to indicate whether you want to drop in NAT GWs and routing
 
     # internal_subnets = { "100.64.0.0/14" = "us-east-1a" } # TODO: Add this
 
@@ -24,14 +24,14 @@ module "vpc_one" {
 
 # Create VPC NACLs
 module "vpc_one_nacl" {
-    source = "../modules/network/nacl/"
+    source = "../modules/network/vpc/nacl/"
 
-    ou       = local.ou
-    use_case = local.use_case
-    tags     = local.tags
+    ou        = local.ou
+    use_case  = local.use_case
+    tags      = local.tags
 
-    vpc_id                  = module.vpc_one.vpc_id
+    vpc_id              = module.vpc_one.vpc_id
     
-    private_subnet_ids      = module.vpc_one.private_subnet_ids
-    public_subnet_ids       = module.vpc_one.public_subnet_ids
+    private_subnet_ids  = module.vpc_one.private_subnet_ids
+    public_subnet_ids   = module.vpc_one.public_subnet_ids
 }
