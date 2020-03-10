@@ -4,8 +4,9 @@
 
 terraform {
     backend "s3" {
-        bucket = "salmoncow"
-        key    = "terraform_state/terraform.tfstate"
-        region = "us-east-1"
+        bucket  = "salmoncow"
+        key     = "terraform_state/terraform.tfstate"
+        region  = "us-east-1"
+        profile = "default"
     }
 }
