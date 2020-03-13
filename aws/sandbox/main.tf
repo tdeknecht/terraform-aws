@@ -1,10 +1,26 @@
+
 data "aws_region" "current" {}
 
 provider "aws" {
-    region = "us-east-1"
+    region  = "us-east-1"
 
     profile = "default"
 }
+
+# ******************************************************************************
+# http provider testing
+# ******************************************************************************
+
+data "aws_ip_ranges" "r53_health_checkers" {
+    regions  = ["us-east-1", "us-west-2"]
+    services = ["ROUTE53_HEALTHCHECKS"]
+}
+
+output r53_health_checkers { value = data.aws_ip_ranges.r53_health_checkers }
+
+# ******************************************************************************
+# playing with for_each and building maps for it
+# ******************************************************************************
 
 variable cgw_configs { 
     default = {
@@ -75,8 +91,8 @@ locals {
     map = length(local.listmap) == 2 ? merge(local.listmap[0], local.listmap[1]) : merge(local.listmap[0])
 }
 
-#output "nat_routes" { value = local.nat_routes }
+# output "nat_routes" { value = local.nat_routes }
 
-#output "listmap" { value = local.listmap }
+# output "listmap" { value = local.listmap } 
 
-output "map" { value = local.map }
+# output "map" { value = local.map }
