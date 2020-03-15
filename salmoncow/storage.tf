@@ -3,7 +3,7 @@
 # ******************************************************************************
 
 # Create backend.tf S3 bucket (yes, it's a circular dependency)
-module "s3_bucket_tf_backend" {
+module "s3_bucket_salmoncow" {
     source = "../modules/storage/s3/s3_bucket/"
 
     ou        = local.ou

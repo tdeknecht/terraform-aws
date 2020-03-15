@@ -10,13 +10,29 @@ provider "aws" {
 # ******************************************************************************
 # http provider testing
 # ******************************************************************************
+data "http" "aws_ips" {
+    url = "https://ip-ranges.amazonaws.com/ip-ranges.json"
+
+    request_headers = {
+        Accept = "application/json"
+    }
+}
+
+# output aws_ips {  doesnt work
+#     value = [
+#         for item in jsondecode(data.http.aws_ips.body)["prefixes"] :
+#             tostring(item["service"]) == "ROUTE53_HEALTHCHECKS" ? item : ""
+#     ]
+# }
 
 data "aws_ip_ranges" "r53_health_checkers" {
     regions  = ["us-east-1", "us-west-2"]
     services = ["ROUTE53_HEALTHCHECKS"]
 }
 
-output r53_health_checkers { value = data.aws_ip_ranges.r53_health_checkers }
+output r53_health_checkers_cidrs { 
+    value = data.aws_ip_ranges.r53_health_checkers.cidr_blocks
+}
 
 # ******************************************************************************
 # playing with for_each and building maps for it
