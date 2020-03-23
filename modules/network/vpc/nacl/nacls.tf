@@ -33,11 +33,84 @@ resource "aws_network_acl" "nacl_public" {
 }
 
 # ******************************************************************************
-# Create Network ACLs: INBOUND
+# Create Network ACLs: PRIVATE Subnets
 # ******************************************************************************
 
-resource "aws_network_acl_rule" "inbound_100" {
+# Create Network ACLs: PRIVATE INBOUND
+resource "aws_network_acl_rule" "private_inbound_100" {
     network_acl_id = aws_network_acl.nacl_private.id
+    rule_number    = 100
+    egress         = false
+    protocol       = "tcp"
+    rule_action    = "allow"
+    cidr_block     = data.aws_vpc.this_vpc.cidr_block
+    from_port      = 80
+    to_port        = 80
+}
+
+resource "aws_network_acl_rule" "private_inbound_110" {
+    network_acl_id = aws_network_acl.nacl_private.id
+    rule_number    = 110
+    egress         = false
+    protocol       = "tcp"
+    rule_action    = "allow"
+    cidr_block     = data.aws_vpc.this_vpc.cidr_block
+    from_port      = 443
+    to_port        = 443
+}
+
+resource "aws_network_acl_rule" "private_inbound_120" {
+    network_acl_id = aws_network_acl.nacl_private.id
+    rule_number    = 120
+    egress         = false
+    protocol       = "tcp"
+    rule_action    = "allow"
+    cidr_block     = data.aws_vpc.this_vpc.cidr_block
+    from_port      = 1024
+    to_port        = 65535
+}
+
+# Create Network ACLs: PRIVATE OUTBOUND
+resource "aws_network_acl_rule" "private_outbound_100" {
+    network_acl_id = aws_network_acl.nacl_private.id
+    rule_number    = 100
+    egress         = true
+    protocol       = "tcp"
+    rule_action    = "allow"
+    cidr_block     = data.aws_vpc.this_vpc.cidr_block
+    from_port      = 80
+    to_port        = 80
+}
+
+resource "aws_network_acl_rule" "private_outbound_110" {
+    network_acl_id = aws_network_acl.nacl_private.id
+    rule_number    = 110
+    egress         = true
+    protocol       = "tcp"
+    rule_action    = "allow"
+    cidr_block     = data.aws_vpc.this_vpc.cidr_block
+    from_port      = 443
+    to_port        = 443
+}
+
+resource "aws_network_acl_rule" "private_outbound_120" {
+    network_acl_id = aws_network_acl.nacl_private.id
+    rule_number    = 120
+    egress         = true
+    protocol       = "tcp"
+    rule_action    = "allow"
+    cidr_block     = data.aws_vpc.this_vpc.cidr_block
+    from_port      = 1024
+    to_port        = 65535
+}
+
+# ******************************************************************************
+# Create Network ACLs: PUBLIC Subnets
+# ******************************************************************************
+
+# Create Network ACLs: PUBLIC INBOUND
+resource "aws_network_acl_rule" "public_inbound_100" {
+    network_acl_id = aws_network_acl.nacl_public.id
     rule_number    = 100
     egress         = false
     protocol       = "tcp"
@@ -47,8 +120,8 @@ resource "aws_network_acl_rule" "inbound_100" {
     to_port        = 80
 }
 
-resource "aws_network_acl_rule" "inbound_110" {
-    network_acl_id = aws_network_acl.nacl_private.id
+resource "aws_network_acl_rule" "public_inbound_110" {
+    network_acl_id = aws_network_acl.nacl_public.id
     rule_number    = 110
     egress         = false
     protocol       = "tcp"
@@ -58,12 +131,31 @@ resource "aws_network_acl_rule" "inbound_110" {
     to_port        = 443
 }
 
-# ******************************************************************************
-# Create Network ACLs: OUTBOUND
-# ******************************************************************************
+resource "aws_network_acl_rule" "public_inbound_120" {
+    network_acl_id = aws_network_acl.nacl_public.id
+    rule_number    = 120
+    egress         = false
+    protocol       = "tcp"
+    rule_action    = "allow"
+    cidr_block     = "0.0.0.0/0"
+    from_port      = 1024
+    to_port        = 65535
+}
 
-resource "aws_network_acl_rule" "outbound_100" {
-    network_acl_id = aws_network_acl.nacl_private.id
+resource "aws_network_acl_rule" "public_inbound_130" {
+    network_acl_id = aws_network_acl.nacl_public.id
+    rule_number    = 130
+    egress         = false
+    protocol       = "tcp"
+    rule_action    = "allow"
+    cidr_block     = "0.0.0.0/0"
+    from_port      = 22
+    to_port        = 22
+}
+
+# Create Network ACLs: PUBLIC OUTBOUND
+resource "aws_network_acl_rule" "public_outbound_100" {
+    network_acl_id = aws_network_acl.nacl_public.id
     rule_number    = 100
     egress         = true
     protocol       = "tcp"
@@ -73,8 +165,8 @@ resource "aws_network_acl_rule" "outbound_100" {
     to_port        = 80
 }
 
-resource "aws_network_acl_rule" "outbound_110" {
-    network_acl_id = aws_network_acl.nacl_private.id
+resource "aws_network_acl_rule" "public_outbound_110" {
+    network_acl_id = aws_network_acl.nacl_public.id
     rule_number    = 110
     egress         = true
     protocol       = "tcp"
@@ -84,3 +176,13 @@ resource "aws_network_acl_rule" "outbound_110" {
     to_port        = 443
 }
 
+resource "aws_network_acl_rule" "public_outbound_120" {
+    network_acl_id = aws_network_acl.nacl_public.id
+    rule_number    = 120
+    egress         = true
+    protocol       = "tcp"
+    rule_action    = "allow"
+    cidr_block     = "0.0.0.0/0"
+    from_port      = 1024
+    to_port        = 65535
+}
