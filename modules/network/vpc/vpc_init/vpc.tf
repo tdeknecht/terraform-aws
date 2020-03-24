@@ -24,7 +24,7 @@ resource "aws_vpc" "vpc" {
 
 # Private subnets
 resource "aws_subnet" "private_subnet" {
-    for_each                = var.private_subnets
+    for_each = var.private_subnets
 
     vpc_id                  = aws_vpc.vpc.id
     availability_zone       = each.value
@@ -42,10 +42,11 @@ resource "aws_subnet" "private_subnet" {
 
 # Public subnets
 resource "aws_subnet" "public_subnet" {
-    for_each            = var.public_subnets
+    for_each = var.public_subnets
 
     vpc_id                  = aws_vpc.vpc.id
     availability_zone       = each.value
+    map_public_ip_on_launch = var.map_public_ip_on_launch
     # availability_zone_id    = each.value
     cidr_block              = each.key
 
@@ -60,7 +61,7 @@ resource "aws_subnet" "public_subnet" {
 
 # Internal subnets
 resource "aws_subnet" "internal_subnet" {
-    for_each            = var.internal_subnets
+    for_each = var.internal_subnets
 
     vpc_id                  = aws_vpc.vpc.id
     availability_zone       = each.value

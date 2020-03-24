@@ -27,6 +27,11 @@ variable nat_gw {
     default     =  false
 }
 
+variable map_public_ip_on_launch {
+    description = "Used in public subnets, this will map a public IP to any instance deployed to the subnet."
+    default     = false
+}
+
 variable private_subnets {
     description = "map of private subnets"
     default     = {}

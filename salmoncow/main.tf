@@ -1,5 +1,5 @@
 # ******************************************************************************
-# VPC construct
+# VPC
 # ******************************************************************************
 
 # Create VPC
@@ -15,6 +15,7 @@ module "vpc_one" {
     private_subnets = { "10.0.0.0/24" = "us-east-1a", "10.0.1.0/24" = "us-east-1b" } # TODO: allow literal AZ as well as logical (default)
     public_subnets  = { "10.0.2.0/24" = "us-east-1a", "10.0.3.0/24" = "us-east-1b" }
 
+    map_public_ip_on_launch = true
     # nat_gw = true   # A flag to indicate whether you want to drop in NAT GWs and routing
 
     # internal_subnets = { "100.64.0.0/14" = "us-east-1a" } # TODO: Add this
@@ -34,4 +35,19 @@ module "vpc_one_nacl" {
     
     private_subnet_ids  = module.vpc_one.private_subnet_ids
     public_subnet_ids   = module.vpc_one.public_subnet_ids
+}
+
+# ******************************************************************************
+# S3
+# ******************************************************************************
+
+# Create backend.tf S3 bucket (yes, it's a circular dependency)
+module "s3_bucket_salmoncow" {
+    source = "../modules/storage/s3/s3_bucket/"
+
+    ou        = local.ou
+    use_case  = local.use_case
+    tags      = local.tags
+
+    bucket_name = local.use_case
 }
