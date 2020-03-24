@@ -6,10 +6,19 @@
 resource "aws_s3_bucket_object" "cfm_ec2_public" {
     bucket = module.s3_bucket_salmoncow.id
     key    = "cloudformation_stacks/ec2_public.yaml"
-    source = "../../cloudformation/modules/compute/ec2_public.yaml"
-    etag   = filemd5("../../cloudformation/modules/compute/ec2_public.yaml")
+    source = "../../cloudformation/ec2_public.yaml"
+    etag   = filemd5("../../cloudformation/ec2_public.yaml")
 
     tags   = local.tags
+}
+
+# Learn our public IP address. Use this for the SSH rule for the instance
+data "http" "icanhazip" {
+    url = "http://icanhazip.com"
+}
+
+output "my_public_ip" {
+    value = chomp(data.http.icanhazip.body)
 }
 
 # EC2 using AWS CloudFormation EC2 module
@@ -21,8 +30,10 @@ resource "aws_cloudformation_stack" "public_ec2" {
     tags         = local.tags
 
     parameters = {
-        VpcIdParm = module.vpc_one.vpc_id
-        RegionId  = local.region
-        SubnetId  = module.vpc_one.public_subnet_ids[0]
+        RegionId    = local.region
+        VpcIdParm   = module.vpc_one.vpc_id
+        SubnetId    = module.vpc_one.public_subnet_ids[0]
+        KeyName     = "aws_salmoncow"
+        SSHLocation = chomp(data.http.icanhazip.body)
     }
 }
