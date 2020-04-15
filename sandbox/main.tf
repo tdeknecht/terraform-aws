@@ -23,7 +23,7 @@ data "http" "aws_ips" {
 output aws_ips {
     value = distinct([
         for item in jsondecode(data.http.aws_ips.body)["prefixes"] :
-            item if item["service"] == "ROUTE53_HEALTHCHECKS" && (item["region"] == "us-east-1" || item["region"] == "us-west-2")
+            item["ip_prefix"] if item["service"] == "ROUTE53_HEALTHCHECKS" && item["region"] == "us-east-1"
     ])
 }
 

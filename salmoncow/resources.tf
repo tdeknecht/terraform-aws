@@ -1,5 +1,5 @@
 # ******************************************************************************
-# Application resources
+# EC2: public instance
 # ******************************************************************************
 
 # EC2 using AWS CloudFormation EC2 module. Module S3 location
@@ -13,13 +13,8 @@ resource "aws_s3_bucket_object" "cfm_ec2_public" {
 }
 
 # Learn our public IP address. Use this for the SSH rule for the instance
-data "http" "icanhazip" {
-    url = "http://icanhazip.com"
-}
-
-output "my_public_ip" {
-    value = chomp(data.http.icanhazip.body)
-}
+data "http" "icanhazip" { url = "http://icanhazip.com" }
+output "my_public_ip"   { value = chomp(data.http.icanhazip.body) }
 
 # EC2 using AWS CloudFormation EC2 module
 resource "aws_cloudformation_stack" "public_ec2" {
@@ -37,3 +32,5 @@ resource "aws_cloudformation_stack" "public_ec2" {
         SSHLocation = chomp(data.http.icanhazip.body)
     }
 }
+
+output cloudformation_ec2_public { value = aws_cloudformation_stack.public_ec2.outputs }
