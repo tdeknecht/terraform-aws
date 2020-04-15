@@ -13,8 +13,8 @@ resource "aws_s3_bucket_object" "cfm_ec2_public" {
 }
 
 # Learn our public IP address. Use this for the SSH rule for the instance
-data "http" "icanhazip" { url = "http://icanhazip.com" }
-output "my_public_ip"   { value = chomp(data.http.icanhazip.body) }
+data "http" "checkip" { url = "http://http://checkip.amazonaws.com/" }
+output "my_public_ip"   { value = chomp(data.http.checkip.body) }
 
 # EC2 using AWS CloudFormation EC2 module
 resource "aws_cloudformation_stack" "public_ec2" {
@@ -29,7 +29,7 @@ resource "aws_cloudformation_stack" "public_ec2" {
         VpcIdParm   = module.vpc_one.vpc_id
         SubnetId    = module.vpc_one.public_subnet_ids[0]
         KeyName     = "aws_salmoncow"
-        SSHLocation = chomp(data.http.icanhazip.body)
+        SSHLocation = chomp(data.http.checkip.body)
     }
 }
 
