@@ -4,23 +4,32 @@ locals {
   public_subnets = var.nat_gw ? var.public_subnets : {}
 }
 
-# ******************************************************************************
+# ------------------------------------------------------------------------------
 # VPC
-# ******************************************************************************
+# ------------------------------------------------------------------------------
 
 # Create VPC (https://www.terraform.io/docs/providers/aws/r/vpc.html)
 resource "aws_vpc" "vpc" {
   cidr_block = var.cidr_block
 
   tags = merge(
-    { Name = "${var.use_case}-${var.ou}-${data.aws_region.current.name}" },
+    {
+      Name = "${var.use_case}-${var.ou}-${data.aws_region.current.name}",
+    },
     var.tags
   )
 }
 
-# ******************************************************************************
+resource "aws_vpc_ipv4_cidr_block_association" "secondary_cidr" {
+  for_each = var.secondary_cidr_blocks
+
+  vpc_id     = aws_vpc.vpc.id
+  cidr_block = each.value
+}
+
+# ------------------------------------------------------------------------------
 # Subnets
-# ******************************************************************************
+# ------------------------------------------------------------------------------
 
 # Private subnets
 resource "aws_subnet" "private_subnet" {
@@ -61,7 +70,8 @@ resource "aws_subnet" "public_subnet" {
 
 # Internal subnets
 resource "aws_subnet" "internal_subnet" {
-  for_each = var.internal_subnets
+  depends_on = [aws_vpc_ipv4_cidr_block_association.secondary_cidr]
+  for_each   = var.internal_subnets
 
   vpc_id            = aws_vpc.vpc.id
   availability_zone = each.value
@@ -77,9 +87,9 @@ resource "aws_subnet" "internal_subnet" {
   )
 }
 
-# ******************************************************************************
+# ------------------------------------------------------------------------------
 # IGW
-# ******************************************************************************
+# ------------------------------------------------------------------------------
 
 resource "aws_internet_gateway" "igw" {
   for_each = local.public_vpc
@@ -87,14 +97,16 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
 
   tags = merge(
-    { Name = "${var.use_case}-${var.ou}-igw" },
+    {
+      Name = "${var.use_case}-${var.ou}-igw"
+    },
     var.tags
   )
 }
 
-# ******************************************************************************
+# ------------------------------------------------------------------------------
 # NAT GW
-# ******************************************************************************
+# ------------------------------------------------------------------------------
 
 resource "aws_eip" "nat_gw_eip" {
   for_each = local.public_subnets
@@ -110,9 +122,9 @@ resource "aws_nat_gateway" "nat_gw" {
   subnet_id = aws_subnet.public_subnet[each.key].id
 }
 
-# ******************************************************************************
+# ------------------------------------------------------------------------------
 # Handle Defaults
-# ******************************************************************************
+# ------------------------------------------------------------------------------
 
 # Default Network ACL (https://www.terraform.io/docs/providers/aws/r/default_network_acl.html)
 
@@ -128,7 +140,9 @@ resource "aws_default_network_acl" "nacl_default" {
   default_network_acl_id = aws_vpc.vpc.default_network_acl_id
 
   tags = merge(
-    { Name = "${var.use_case}-${var.ou}-default-nacl" },
+    {
+      Name = "${var.use_case}-${var.ou}-default-nacl"
+    },
     var.tags
   )
 }
