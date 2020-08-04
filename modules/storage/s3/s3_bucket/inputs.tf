@@ -2,22 +2,33 @@
 # Required inputs
 # ------------------------------------------------------------------------------
 
-variable bucket_name {
-  description = "Name of the S3 bucket. Must be DNS friendly"
-}
-
 variable ou {
-  description = "organizational unit identifier"
+  description = "(Required) A logical identifier for the Organizational Unit."
+  type        = string
 }
 
 variable use_case {
-  description = "global use case name"
+  description = "(Required) A friendly identifier of the use case."
+  type        = string
 }
 
 variable tags {
-  description = "resource tags"
+  description = "(Required) A map of tags to assign to the resource."
+  type        = map(string)
 }
 
 # ------------------------------------------------------------------------------
 # Optional inputs
 # ------------------------------------------------------------------------------
+
+variable bucket {
+  description = "(Optional, Forces new resource) The name of the bucket. If omitted, Terraform will assign a random, unique name."
+  type = string
+  default = ""
+}
+
+variable acl {
+  description = "(Optional) The canned ACL to apply. Defaults to `private`. Conflicts with grant."
+  type = string
+  default = "private"
+}

@@ -2,7 +2,7 @@
 # VPC
 # ------------------------------------------------------------------------------
 
-# Create VPC
+# create vpc_one
 module "vpc_one" {
   source = "../modules/network/vpc/vpc_init/"
 
@@ -22,16 +22,14 @@ output "private_subnet_ids" { value = module.vpc_one.private_subnet_ids }
 output "public_subnet_ids" { value = module.vpc_one.public_subnet_ids }
 output "internal_subnet_ids" { value = module.vpc_one.internal_subnet_ids }
 
-# Create VPC NACLs
+# create vpc_one NACLs
 module "vpc_one_nacl" {
   source = "../modules/network/vpc/nacl/"
 
-  ou       = local.ou
-  use_case = local.use_case
-  tags     = local.tags
-
-  vpc_id = module.vpc_one.vpc_id
-
+  ou                  = local.ou
+  use_case            = local.use_case
+  tags                = local.tags
+  vpc_id              = module.vpc_one.vpc_id
   private_subnet_ids  = module.vpc_one.private_subnet_ids
   public_subnet_ids   = module.vpc_one.public_subnet_ids
   internal_subnet_ids = module.vpc_one.internal_subnet_ids
@@ -46,7 +44,6 @@ module "s3_bucket_salmoncow" {
 
   ou       = local.ou
   use_case = local.use_case
+  bucket   = "salmoncow"
   tags     = local.tags
-
-  bucket_name = local.use_case
 }

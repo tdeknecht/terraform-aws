@@ -26,6 +26,24 @@ variable tags {
 # Optional inputs
 # ------------------------------------------------------------------------------
 
+variable instance_tenancy {
+  description = "(Optional) A tenancy option for instances launched into the VPC. Default is default, which makes your instances shared on the host. Using either of the other options (dedicated or host) costs at least $2/hr."
+  type = string
+  default = "default"
+}
+
+variable enable_dns_support {
+  description = "(Optional) A boolean flag to enable/disable DNS support in the VPC. Defaults true."
+  type        = bool
+  default     = true
+}
+
+variable enable_dns_hostnames {
+  description = "(Optional) A boolean flag to enable/disable DNS hostnames in the VPC. Defaults false."
+  type        = bool
+  default     = false
+}
+
 variable secondary_cidr_blocks {
   description = "(Optional) A set of additional CIDR blocks to associate with the VPC."
   type        = set(string)
