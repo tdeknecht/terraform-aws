@@ -41,26 +41,30 @@ module "vpc_one_nacl" {
 # S3
 # ------------------------------------------------------------------------------
 
+# salmoncow
 module "s3_bucket_salmoncow" {
   source = "../modules/storage/s3/s3_bucket/"
 
-  ou       = local.ou
-  use_case = local.use_case
-  bucket   = "salmoncow"
-  tags     = local.tags
-#   policy   = <<EOF
-# {
-#   "Version":"2012-10-17",
-#   "Statement":[
-#     {
-#       "Sid":"PrivateBucketRole",
-#       "Effect":"Allow",
-#       "Principal": 
-#         {"AWS":["arn:aws:iam::117865246796:tdeknecht"]},
-#       "Action":["s3:*"],
-#       "Resource":"arn:aws:s3:::salmoncow/*"
-#     }
-#   ]
-# }
-# EOF
+  ou                  = local.ou
+  use_case            = local.use_case
+  bucket              = "salmoncow"
+  versioning          = true
+  base_lifecycle_rule = true
+  policy              = data.aws_iam_policy_document.s3_bucket_policy_tdeknecht.json
+  tags                = local.tags
+}
+
+output "s3_salmoncow_id" { value = module.s3_bucket_salmoncow.id }
+output "s3_salmoncow_arn" { value = module.s3_bucket_salmoncow.arn }
+
+data "aws_iam_policy_document" "s3_bucket_policy_tdeknecht" {
+  statement {
+    sid       = "tdeknechtS3"
+    actions   = ["s3:*"]
+    resources = ["arn:aws:s3:::salmoncow/*"]
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::117865246796:user/tdeknecht"]
+    }
+  }
 }

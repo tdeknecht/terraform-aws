@@ -35,8 +35,26 @@ variable acl {
 
 variable policy {
   description = "(Optional) A valid bucket policy JSON document."
-  type = string
-  default = ""
+  type        = string
+  default     = ""
+}
+
+variable versioning {
+  description = "(Optional) A state of versioning."
+  type        = bool
+  default     = false
+}
+
+variable base_lifecycle_rule {
+  description = "(Optional) The base configuration of object lifecycle management for whole bucket. Deletes previous versions after 90 days."
+  type        = bool
+  default     = false
+}
+
+variable mfa_delete {
+  description = "(Optional) Enable MFA delete for either Change the versioning state of your bucket or Permanently delete an object version. This cannot be used to toggle this setting but is available to allow managed buckets to reflect the state in AWS."
+  type        = bool
+  default     = false
 }
 
 variable block_public_acls {

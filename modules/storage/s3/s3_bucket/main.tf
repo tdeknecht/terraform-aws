@@ -7,6 +7,26 @@ resource "aws_s3_bucket" "s3_bucket" {
   acl    = var.acl
   policy = var.policy
 
+  versioning {
+    enabled    = var.versioning
+    mfa_delete = var.mfa_delete
+  }
+
+  lifecycle_rule {
+    id      = "base"
+    enabled = var.base_lifecycle_rule
+
+    abort_incomplete_multipart_upload_days = 7
+
+    noncurrent_version_expiration {
+      days = 90
+    }
+
+    expiration {
+      expired_object_delete_marker = true
+    }
+  }
+
   tags = merge(
     {
       Name = "${var.use_case}-${var.ou}-${data.aws_region.current.name}"
