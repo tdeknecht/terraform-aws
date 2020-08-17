@@ -57,14 +57,14 @@ module "s3_bucket_salmoncow" {
 output "s3_salmoncow_id" { value = module.s3_bucket_salmoncow.id }
 output "s3_salmoncow_arn" { value = module.s3_bucket_salmoncow.arn }
 
-data "aws_iam_policy_document" "s3_bucket_policy_tdeknecht" {
+data "aws_iam_policy_document" "s3_bucket_policy_admin" {
   statement {
     sid       = "tdeknechtS3"
     actions   = ["s3:*"]
     resources = ["arn:aws:s3:::salmoncow/*"]
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::117865246796:user/tdeknecht"]
+      identifiers = ["arn:aws:iam::${var.aws_account_id}:user/admin"]
     }
   }
 }

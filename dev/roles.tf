@@ -19,7 +19,7 @@ data "aws_iam_policy_document" "base_role_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::117865246796:user/tdeknecht"]
+      identifiers = ["arn:aws:iam::${var.aws_account_id}:user/admin"]
     }
   }
 }
