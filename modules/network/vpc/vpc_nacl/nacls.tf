@@ -13,7 +13,7 @@ resource "aws_network_acl" "nacl_private" {
 
   tags = merge(
     { 
-      Name = "${var.use_case}-${var.segment}-private-nacl"
+      "Name" = "${var.use_case}-${var.segment}-private-nacl"
     },
     var.tags
   )
@@ -26,7 +26,7 @@ resource "aws_network_acl" "nacl_public" {
 
   tags = merge(
     { 
-      Name = "${var.use_case}-${var.segment}-public-nacl"
+      "Name" = "${var.use_case}-${var.segment}-public-nacl"
     },
     var.tags
   )
@@ -39,7 +39,7 @@ resource "aws_network_acl" "nacl_internal" {
 
   tags = merge(
     { 
-      Name = "${var.use_case}-${var.segment}-internal-nacl"
+      "Name" = "${var.use_case}-${var.segment}-internal-nacl"
     },
     var.tags
   )

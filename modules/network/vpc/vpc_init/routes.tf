@@ -8,7 +8,7 @@ resource "aws_default_route_table" "default_rt" {
 
   tags = merge(
     {
-      Name = "${var.use_case}-${var.segment}-default-rt"
+      "Name" = "${var.use_case}-${var.segment}-default-rt"
     },
     var.tags
   )
@@ -21,7 +21,7 @@ resource "aws_route_table" "public_rt" {
 
   tags = merge(
     {
-      Name = "${var.use_case}-${var.segment}-${each.value}-public-rt"
+      "Name" = "${var.use_case}-${var.segment}-${each.value}-public-rt"
     },
     var.tags
   )
@@ -34,7 +34,7 @@ resource "aws_route_table" "private_rt" {
 
   tags = merge(
     {
-      Name = "${var.use_case}-${var.segment}-${each.value}-private-rt"
+      "Name" = "${var.use_case}-${var.segment}-${each.value}-private-rt"
     },
     var.tags
   )
@@ -47,7 +47,7 @@ resource "aws_route_table" "internal_rt" {
 
   tags = merge(
     {
-      Name = "${var.use_case}-${var.segment}-${each.value}-internal-rt"
+      "Name" = "${var.use_case}-${var.segment}-${each.value}-internal-rt"
     },
     var.tags
   )

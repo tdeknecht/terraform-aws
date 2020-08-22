@@ -27,9 +27,13 @@ resource "aws_s3_bucket" "s3_bucket" {
     }
   }
 
+  lifecycle {
+    prevent_destroy = true
+  }
+
   tags = merge(
     {
-      Name = "${var.use_case}-${var.ou}-${data.aws_region.current.name}"
+      "Name" = "${var.use_case}-${var.ou}-${data.aws_region.current.name}"
     },
     var.tags
   )

@@ -10,13 +10,13 @@ module "vpc_one" {
   use_case                = local.use_case
   segment                 = "dev1"
   cidr_block              = "172.24.1.0/24"
-  secondary_cidr_blocks   = ["172.24.0.0/26","100.64.0.0/16"]
+  secondary_cidr_blocks   = ["172.24.0.0/26", "100.64.0.0/16"]
   private_subnets         = { "172.24.1.0/25" = "us-east-1a", "172.24.1.128/25" = "us-east-1b" }
   public_subnets          = { "172.24.0.0/28" = "us-east-1a", "172.24.0.16/28" = "us-east-1b" }
   internal_subnets        = { "100.64.0.0/17" = "us-east-1a", "100.64.128.0/17" = "us-east-1b" }
   map_public_ip_on_launch = true
   # nat_gw                  = true 
-  tags                    = local.tags
+  tags = local.tags
 }
 output "vpc_id" { value = module.vpc_one.vpc_id }
 output "private_subnet_ids" { value = module.vpc_one.private_subnet_ids }
@@ -39,18 +39,34 @@ module "vpc_one_nacl" {
 }
 
 # ------------------------------------------------------------------------------
+# EC2: Linux 2 HVM, SSD
+# ------------------------------------------------------------------------------
+# module "aws_linux2_1" {
+#   source = "../modules/compute/ec2/"
+
+#   ou                 = local.ou
+#   use_case           = local.use_case
+#   subnet_id          = module.vpc_one.public_subnet_ids[0]
+#   security_group_ids = [module.vpc_one.default_security_group_id]
+#   public_ip          = true
+#   ssh_from_my_ip     = true
+#   tags               = local.tags
+# }
+
+
+# ------------------------------------------------------------------------------
 # EC2: public instance using CloudFormation
 # ------------------------------------------------------------------------------
 
 # EC2 using AWS CloudFormation EC2 module. Module S3 location
-resource "aws_s3_bucket_object" "cfm_ec2_public" {
-  bucket = module.s3_bucket_salmoncow.id
-  key    = "cloudformation_stacks/ec2_public.yaml"
-  source = "../../cloudformation/ec2_public.yaml"
-  etag   = filemd5("../../cloudformation/ec2_public.yaml")
+# resource "aws_s3_bucket_object" "cfm_ec2_public" {
+#   bucket = module.s3_bucket_salmoncow.id
+#   key    = "cloudformation_stacks/ec2_public.yaml"
+#   source = "../../cloudformation/ec2_public.yaml"
+#   etag   = filemd5("../../cloudformation/ec2_public.yaml")
 
-  tags = local.tags
-}
+#   tags = local.tags
+# }
 
 # Learn our public IP address. Use this for the SSH rule for the instance
 # data "http" "checkip" { url = "http://icanhazip.com" }
@@ -142,7 +158,7 @@ resource "aws_iam_user" "admin" {
 }
 
 resource "aws_iam_user_group_membership" "admin" {
-  user   = aws_iam_user.admin.name
+  user = aws_iam_user.admin.name
   groups = [
     aws_iam_group.admin.name,
     aws_iam_group.billing.name,

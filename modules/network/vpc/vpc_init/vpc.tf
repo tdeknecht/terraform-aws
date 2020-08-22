@@ -17,7 +17,7 @@ resource "aws_vpc" "vpc" {
 
   tags = merge(
     {
-      Name = "${var.use_case}-${var.segment}-${data.aws_region.current.name}",
+      "Name" = "${var.use_case}-${var.segment}-${data.aws_region.current.name}",
     },
     var.tags
   )
@@ -45,8 +45,8 @@ resource "aws_subnet" "private_subnet" {
 
   tags = merge(
     {
-      Name    = "${var.use_case}-${var.segment}-${each.value}-private-subnet",
-      network = "private"
+      "Name"    = "${var.use_case}-${var.segment}-${each.value}-private-subnet",
+      "network" = "private"
     },
     var.tags
   )
@@ -64,8 +64,8 @@ resource "aws_subnet" "public_subnet" {
 
   tags = merge(
     {
-      Name    = "${var.use_case}-${var.segment}-${each.value}-public-subnet",
-      network = "public"
+      "Name"    = "${var.use_case}-${var.segment}-${each.value}-public-subnet",
+      "network" = "public"
     },
     var.tags
   )
@@ -83,8 +83,8 @@ resource "aws_subnet" "internal_subnet" {
 
   tags = merge(
     {
-      Name    = "${var.use_case}-${var.segment}-${each.value}-internal-subnet",
-      network = "internal"
+      "Name"    = "${var.use_case}-${var.segment}-${each.value}-internal-subnet",
+      "network" = "internal"
     },
     var.tags
   )
@@ -101,7 +101,7 @@ resource "aws_internet_gateway" "igw" {
 
   tags = merge(
     {
-      Name = "${var.use_case}-${var.segment}-igw"
+      "Name" = "${var.use_case}-${var.segment}-igw"
     },
     var.tags
   )
@@ -139,13 +139,43 @@ resource "aws_nat_gateway" "nat_gw" {
 # created, and any additions/removals external to this resource will result in diffs being 
 # shown. For these reasons, this resource is incompatible with the aws_network_acl_rule resource.
 
-resource "aws_default_network_acl" "nacl_default" {
+resource "aws_default_network_acl" "default" {
   default_network_acl_id = aws_vpc.vpc.default_network_acl_id
 
   tags = merge(
     {
-      Name = "${var.use_case}-${var.segment}-default-nacl"
+      "Name" = "${var.use_case}-${var.segment}-default-nacl"
     },
     var.tags
   )
+}
+
+# Default Security Group
+
+# When Terraform first adopts the Default Security Group, it immediately removes all ingress and egress rules 
+# in the Security Group. It then proceeds to create any rules specified in the configuration. This step is 
+# required so that only the rules specified in the configuration are created.
+
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.vpc.id
+  tags = merge(
+    {
+      "Name" = "${var.use_case}-${var.segment}-default-sg"
+    },
+    var.tags
+  )
+
+  ingress {
+    protocol  = -1
+    self      = true
+    from_port = 0
+    to_port   = 0
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }

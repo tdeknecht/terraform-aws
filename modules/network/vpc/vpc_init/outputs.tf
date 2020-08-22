@@ -10,6 +10,10 @@ output "segment" {
   value = var.segment
 }
 
+output "default_security_group_id" {
+  value = aws_default_security_group.default.id
+}
+
 output "default_network_acl_id" {
   value = aws_vpc.vpc.default_network_acl_id
 }
