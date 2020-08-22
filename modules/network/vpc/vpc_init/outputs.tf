@@ -6,6 +6,10 @@ output "vpc_id" {
   value = aws_vpc.vpc.id
 }
 
+output "segment" {
+  value = var.segment
+}
+
 output "default_network_acl_id" {
   value = aws_vpc.vpc.default_network_acl_id
 }

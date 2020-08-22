@@ -8,14 +8,15 @@ module "vpc_one" {
 
   ou                      = local.ou
   use_case                = local.use_case
-  tags                    = local.tags
-  cidr_block              = "10.0.0.0/16"
-  secondary_cidr_blocks   = ["100.64.0.0/16"]
-  private_subnets         = { "10.0.0.0/24" = "us-east-1a", "10.0.1.0/24" = "us-east-1b" }
-  public_subnets          = { "10.0.2.0/24" = "us-east-1a", "10.0.3.0/24" = "us-east-1b" }
+  segment                 = "dev1"
+  cidr_block              = "172.24.1.0/24"
+  secondary_cidr_blocks   = ["172.24.0.0/26","100.64.0.0/16"]
+  private_subnets         = { "172.24.1.0/25" = "us-east-1a", "172.24.1.128/25" = "us-east-1b" }
+  public_subnets          = { "172.24.0.0/28" = "us-east-1a", "172.24.0.16/28" = "us-east-1b" }
   internal_subnets        = { "100.64.0.0/17" = "us-east-1a", "100.64.128.0/17" = "us-east-1b" }
   map_public_ip_on_launch = true
   # nat_gw                  = true 
+  tags                    = local.tags
 }
 output "vpc_id" { value = module.vpc_one.vpc_id }
 output "private_subnet_ids" { value = module.vpc_one.private_subnet_ids }
@@ -29,12 +30,49 @@ module "vpc_one_nacl" {
 
   ou                  = local.ou
   use_case            = local.use_case
-  tags                = local.tags
+  segment             = module.vpc_one.segment
   vpc_id              = module.vpc_one.vpc_id
   private_subnet_ids  = module.vpc_one.private_subnet_ids
   public_subnet_ids   = module.vpc_one.public_subnet_ids
   internal_subnet_ids = module.vpc_one.internal_subnet_ids
+  tags                = local.tags
 }
+
+# ------------------------------------------------------------------------------
+# EC2: public instance using CloudFormation
+# ------------------------------------------------------------------------------
+
+# EC2 using AWS CloudFormation EC2 module. Module S3 location
+resource "aws_s3_bucket_object" "cfm_ec2_public" {
+  bucket = module.s3_bucket_salmoncow.id
+  key    = "cloudformation_stacks/ec2_public.yaml"
+  source = "../../cloudformation/ec2_public.yaml"
+  etag   = filemd5("../../cloudformation/ec2_public.yaml")
+
+  tags = local.tags
+}
+
+# Learn our public IP address. Use this for the SSH rule for the instance
+# data "http" "checkip" { url = "http://icanhazip.com" }
+# output "my_public_ip" { value = chomp(data.http.checkip.body) }
+
+# EC2 using AWS CloudFormation EC2 module
+# resource "aws_cloudformation_stack" "public_ec2" {
+#   depends_on = [aws_s3_bucket_object.cfm_ec2_public]
+
+#   name         = "public-ec2"
+#   template_url = format("https://%s.s3.amazonaws.com/%s", module.s3_bucket_salmoncow.id, aws_s3_bucket_object.cfm_ec2_public.id)
+#   tags         = local.tags
+
+#   parameters = {
+#     RegionId    = local.region
+#     VpcIdParm   = module.vpc_one.vpc_id
+#     SubnetId    = module.vpc_one.public_subnet_ids[0]
+#     KeyName     = "aws_salmoncow"
+#     SSHLocation = chomp(data.http.checkip.body)
+#   }
+# }
+# output cloudformation_ec2_public { value = aws_cloudformation_stack.public_ec2.outputs }
 
 # ------------------------------------------------------------------------------
 # S3: Buckets
@@ -94,10 +132,10 @@ resource "aws_iam_group_policy_attachment" "billing" {
 }
 
 # ------------------------------------------------------------------------------
-# IAM: Users and Group Associations
+# IAM: Users, User Policies, User Policy Attachments, and Group Associations
 # ------------------------------------------------------------------------------
 
-# users
+# admin
 resource "aws_iam_user" "admin" {
   name = var.aws_account_admin
   tags = local.tags
@@ -109,6 +147,17 @@ resource "aws_iam_user_group_membership" "admin" {
     aws_iam_group.admin.name,
     aws_iam_group.billing.name,
   ]
+}
+
+# nas-glacier-backup
+resource "aws_iam_user" "nas_glacier_backup" {
+  name = "nas-glacier-backup"
+  tags = local.tags
+}
+
+resource "aws_iam_user_policy_attachment" "test-attach" {
+  user       = aws_iam_user.nas_glacier_backup.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonGlacierFullAccess"
 }
 
 # ------------------------------------------------------------------------------

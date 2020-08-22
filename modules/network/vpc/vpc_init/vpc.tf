@@ -17,7 +17,7 @@ resource "aws_vpc" "vpc" {
 
   tags = merge(
     {
-      Name = "${var.use_case}-${var.ou}-${data.aws_region.current.name}",
+      Name = "${var.use_case}-${var.segment}-${data.aws_region.current.name}",
     },
     var.tags
   )
@@ -45,7 +45,7 @@ resource "aws_subnet" "private_subnet" {
 
   tags = merge(
     {
-      Name    = "${var.use_case}-${var.ou}-${each.value}-private-subnet",
+      Name    = "${var.use_case}-${var.segment}-${each.value}-private-subnet",
       network = "private"
     },
     var.tags
@@ -64,7 +64,7 @@ resource "aws_subnet" "public_subnet" {
 
   tags = merge(
     {
-      Name    = "${var.use_case}-${var.ou}-${each.value}-public-subnet",
+      Name    = "${var.use_case}-${var.segment}-${each.value}-public-subnet",
       network = "public"
     },
     var.tags
@@ -83,7 +83,7 @@ resource "aws_subnet" "internal_subnet" {
 
   tags = merge(
     {
-      Name    = "${var.use_case}-${var.ou}-${each.value}-internal-subnet",
+      Name    = "${var.use_case}-${var.segment}-${each.value}-internal-subnet",
       network = "internal"
     },
     var.tags
@@ -101,7 +101,7 @@ resource "aws_internet_gateway" "igw" {
 
   tags = merge(
     {
-      Name = "${var.use_case}-${var.ou}-igw"
+      Name = "${var.use_case}-${var.segment}-igw"
     },
     var.tags
   )
@@ -144,7 +144,7 @@ resource "aws_default_network_acl" "nacl_default" {
 
   tags = merge(
     {
-      Name = "${var.use_case}-${var.ou}-default-nacl"
+      Name = "${var.use_case}-${var.segment}-default-nacl"
     },
     var.tags
   )

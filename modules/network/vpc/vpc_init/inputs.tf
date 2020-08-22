@@ -17,6 +17,11 @@ variable "use_case" {
   type        = string
 }
 
+variable "segment" {
+  description = "(Required) An identifier for this network segment (e.g. dev1, analytics1, test1, prod1, etc.)"
+  type        = string
+}
+
 variable "tags" {
   description = "(Required) A map of tags to assign to the resource."
   type        = map(string)
