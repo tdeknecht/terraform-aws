@@ -16,7 +16,8 @@ locals {
   use_case = "000"
 
   tags = {
-    deployment = "terraform"
-    owner      = "td"
+    "deployment" = "terraform"
+    "owner"      = "td"
+    "use_case"   = local.use_case
   }
 }

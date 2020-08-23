@@ -36,7 +36,13 @@ variable "security_group_ids" {
 variable "instance_type" {
   description = "(Optional) The type of instance to start. Updates to this field will trigger a stop/start of the EC2 instance."
   type        = string
-  default     = "t3.micro"
+  default     = "t2.micro"
+}
+
+variable "iam_instance_profile" {
+  description = "(Optional) The IAM Instance Profile to launch the instance with."
+  type        = string
+  default     = null
 }
 
 variable "user_data" {

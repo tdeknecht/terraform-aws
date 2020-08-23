@@ -2,6 +2,22 @@
 # EC2: AWS Linux
 # ------------------------------------------------------------------------------
 
+locals {
+  module_security_groups = var.ssh_from_my_ip ? [
+    aws_security_group.allow_ssh[0].id,
+    ] : []
+}
+
+resource "aws_instance" "this" {
+  ami                    = length(var.ami) > 0 ? var.ami : data.aws_ami.aws_linux_2.id
+  instance_type          = var.instance_type
+  iam_instance_profile   = var.iam_instance_profile
+  vpc_security_group_ids = concat(var.security_group_ids, local.module_security_groups)
+  subnet_id              = var.subnet_id
+  user_data              = var.user_data
+  tags                   = var.tags
+}
+
 data "aws_ami" "aws_linux_2" {
   most_recent = true
   owners      = ["amazon"]
@@ -15,14 +31,6 @@ data "aws_ami" "aws_linux_2" {
     name   = "virtualization-type"
     values = ["hvm"]
   }
-}
-
-resource "aws_instance" "this" {
-  ami                    = length(var.ami) > 0 ? var.ami : data.aws_ami.aws_linux_2.id
-  instance_type          = var.instance_type
-  vpc_security_group_ids = concat(var.security_group_ids, [aws_security_group.allow_ssh.id])
-  subnet_id              = var.subnet_id
-  tags                   = var.tags
 }
 
 resource "aws_eip" "this" {
@@ -41,6 +49,8 @@ data "aws_subnet" "selected" {
 }
 
 resource "aws_security_group" "allow_ssh" {
+  count = var.ssh_from_my_ip ? 1 : 0
+
   name        = "ssh_from_requester_ip"
   description = "Allow SSH from requesters current public IP"
   vpc_id      = data.aws_subnet.selected.vpc_id
