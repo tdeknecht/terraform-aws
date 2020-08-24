@@ -46,7 +46,7 @@ module "vpc_one_nacl" {
 
 #   ou                     = local.ou
 #   use_case               = local.use_case
-#   subnet_id              = module.vpc_one.public_subnet_ids[0]
+#   subnet_id              = module.vpc_one.private_subnet_ids[0]
 #   security_group_ids     = [module.vpc_one.default_security_group_id]
 #   iam_instance_profile   = aws_iam_instance_profile.base_ec2_assume_role.name
 #   user_data              = file("./user_data/apache.sh")

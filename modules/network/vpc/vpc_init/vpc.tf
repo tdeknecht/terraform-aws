@@ -156,26 +156,26 @@ resource "aws_default_network_acl" "default" {
 # in the Security Group. It then proceeds to create any rules specified in the configuration. This step is 
 # required so that only the rules specified in the configuration are created.
 
-# resource "aws_default_security_group" "default" {
-#   vpc_id = aws_vpc.vpc.id
-#   tags = merge(
-#     {
-#       "Name" = "${var.use_case}-${var.segment}-default-sg"
-#     },
-#     var.tags
-#   )
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.vpc.id
+  tags = merge(
+    {
+      "Name" = "${var.use_case}-${var.segment}-default-sg"
+    },
+    var.tags
+  )
 
-#   ingress {
-#     protocol  = -1
-#     self      = true
-#     from_port = 0
-#     to_port   = 0
-#   }
+  ingress {
+    protocol  = -1
+    self      = true
+    from_port = 0
+    to_port   = 0
+  }
 
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-# }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
