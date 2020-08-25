@@ -73,6 +73,18 @@ variable "vpc_endpoint_ssm" {
   default     = false
 }
 
+variable "vpc_endpoint_ssmmessages" {
+  description = "(Optional) Creates a VPC endpoint for the SSMMESSAGES service in the private subnets."
+  type        = bool
+  default     = false
+}
+
+variable "vpc_endpoint_ec2messages" {
+  description = "(Optional) Creates a VPC endpoint for the EC2MESSAGES service in the private subnets."
+  type        = bool
+  default     = false
+}
+
 variable "private_subnets" {
   description = "(Optional) A map of private subnets in CIDR notation with a corresponding Availability Zone (e.g. '10.0.0.0/24' = 'us-east-1a')."
   type        = map(string)

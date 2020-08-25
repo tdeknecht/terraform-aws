@@ -6,17 +6,19 @@
 module "vpc_one" {
   source = "../modules/network/vpc/vpc_init/"
 
-  ou                      = local.ou
-  use_case                = local.use_case
-  segment                 = "dev1"
-  cidr_block              = "172.24.1.0/24"
-  secondary_cidr_blocks   = ["172.24.0.0/26", "100.64.0.0/16"]
-  private_subnets         = { "172.24.1.0/25" = "us-east-1a", "172.24.1.128/25" = "us-east-1b" }
-  public_subnets          = { "172.24.0.0/28" = "us-east-1a", "172.24.0.16/28" = "us-east-1b" }
-  internal_subnets        = { "100.64.0.0/17" = "us-east-1a", "100.64.128.0/17" = "us-east-1b" }
-  map_public_ip_on_launch = true
-  # nat_gw                  = true
-  # vpc_endpoint_ssm        = true
+  ou                       = local.ou
+  use_case                 = local.use_case
+  segment                  = "dev1"
+  cidr_block               = "172.24.1.0/24"
+  secondary_cidr_blocks    = ["172.24.0.0/26", "100.64.0.0/16"]
+  private_subnets          = { "172.24.1.0/25" = "us-east-1a", "172.24.1.128/25" = "us-east-1b" }
+  public_subnets           = { "172.24.0.0/28" = "us-east-1a", "172.24.0.16/28" = "us-east-1b" }
+  internal_subnets         = { "100.64.0.0/17" = "us-east-1a", "100.64.128.0/17" = "us-east-1b" }
+  map_public_ip_on_launch  = true
+  # nat_gw                   = true
+  # vpc_endpoint_ssm         = true
+  # vpc_endpoint_ssmmessages = true
+  # vpc_endpoint_ec2messages = true
   tags = local.tags
 }
 output "vpc_id" { value = module.vpc_one.vpc_id }
