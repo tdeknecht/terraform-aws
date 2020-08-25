@@ -67,6 +67,12 @@ variable "map_public_ip_on_launch" {
   default     = false
 }
 
+variable "vpc_endpoint_ssm" {
+  description = "(Optional) Creates a VPC endpoint for the SSM service in the private subnets."
+  type        = bool
+  default     = false
+}
+
 variable "private_subnets" {
   description = "(Optional) A map of private subnets in CIDR notation with a corresponding Availability Zone (e.g. '10.0.0.0/24' = 'us-east-1a')."
   type        = map(string)

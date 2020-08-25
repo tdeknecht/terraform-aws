@@ -15,7 +15,8 @@ module "vpc_one" {
   public_subnets          = { "172.24.0.0/28" = "us-east-1a", "172.24.0.16/28" = "us-east-1b" }
   internal_subnets        = { "100.64.0.0/17" = "us-east-1a", "100.64.128.0/17" = "us-east-1b" }
   map_public_ip_on_launch = true
-  # nat_gw                  = true 
+  # nat_gw                  = true
+  # vpc_endpoint_ssm        = true
   tags = local.tags
 }
 output "vpc_id" { value = module.vpc_one.vpc_id }
