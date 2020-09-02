@@ -1,5 +1,4 @@
 locals {
-  # Create a new map that behaves similar to the old method using count as a flag. This time it has a name, and is not a count index.
   public_vpc     = var.public_subnets != {} ? { (var.cidr_block) = data.aws_region.current.name } : {}
   public_subnets = var.nat_gw ? var.public_subnets : {}
 }
