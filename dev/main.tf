@@ -1,129 +1,148 @@
-# ------------------------------------------------------------------------------
-# VPC
-# ------------------------------------------------------------------------------
 
-# vpc_one
-module "vpc_one" {
-  source = "../modules/network/vpc/vpc_init/"
+data "aws_region" "current" {}
 
-  ou                       = local.ou
-  use_case                 = local.use_case
-  segment                  = "dev1"
-  cidr_block               = "172.24.1.0/24"
-  secondary_cidr_blocks    = ["172.24.0.0/26", "100.64.0.0/16"]
-  private_subnets          = { "172.24.1.0/25" = "us-east-1a", "172.24.1.128/25" = "us-east-1b" }
-  public_subnets           = { "172.24.0.0/28" = "us-east-1a", "172.24.0.16/28" = "us-east-1b" }
-  internal_subnets         = { "100.64.0.0/17" = "us-east-1a", "100.64.128.0/17" = "us-east-1b" }
-  map_public_ip_on_launch  = true
-  # nat_gw                   = true
-  # vpc_endpoint_ssm         = true
-  # vpc_endpoint_ssmmessages = true
-  # vpc_endpoint_ec2messages = true
-  tags = local.tags
-}
-output "vpc_id" { value = module.vpc_one.vpc_id }
-output "private_subnet_ids" { value = module.vpc_one.private_subnet_ids }
-output "public_subnet_ids" { value = module.vpc_one.public_subnet_ids }
-output "internal_subnet_ids" { value = module.vpc_one.internal_subnet_ids }
+provider "aws" {
+  region = "us-east-1"
 
-module "vpc_one_nacl" {
-  source = "../modules/network/vpc/vpc_nacl/"
-
-  depends_on = [module.vpc_one.vpc_id] # depending on the entire module caused a rebuild even if something as simple as tags were changed
-
-  ou                  = local.ou
-  use_case            = local.use_case
-  segment             = module.vpc_one.segment
-  vpc_id              = module.vpc_one.vpc_id
-  private_subnet_ids  = module.vpc_one.private_subnet_ids
-  public_subnet_ids   = module.vpc_one.public_subnet_ids
-  internal_subnet_ids = module.vpc_one.internal_subnet_ids
-  tags                = local.tags
+  profile = "default"
 }
 
-# ------------------------------------------------------------------------------
-# EC2: Linux 2 HVM, SSD
-# ------------------------------------------------------------------------------
-# module "aws_linux2_1" {
-#   source = "../modules/compute/ec2/"
+variable "hello" { default = "world" }
+output "hello" { value = var.hello }
 
-#   ou                     = local.ou
-#   use_case               = local.use_case
-#   subnet_id              = module.vpc_one.private_subnet_ids[0]
-#   security_group_ids     = [module.vpc_one.default_security_group_id]
-#   iam_instance_profile   = aws_iam_instance_profile.base_ec2_assume_role.name
-#   user_data              = file("./user_data/apache.sh")
-#   # public_ip              = true
-#   # ssh_from_my_ip         = true
-#   tags                   = local.tags
-# }
-
+data "http" "checkip" { url = "http://icanhazip.com" }
+output "my_public_ip" { value = "${chomp(data.http.checkip.body)}/32" }
 
 # ------------------------------------------------------------------------------
-# EC2: public instance using CloudFormation
+# stack overflow
 # ------------------------------------------------------------------------------
 
-# EC2 using AWS CloudFormation EC2 module. Module S3 location
-# resource "aws_s3_bucket_object" "cfm_ec2_public" {
-#   bucket = module.s3_bucket_salmoncow.id
-#   key    = "cloudformation_stacks/ec2_public.yaml"
-#   source = "../../cloudformation/ec2_public.yaml"
-#   etag   = filemd5("../../cloudformation/ec2_public.yaml")
-
-#   tags = local.tags
-# }
-
-# Learn our public IP address. Use this for the SSH rule for the instance
-# data "http" "checkip" { url = "http://icanhazip.com" }
-# output "my_public_ip" { value = chomp(data.http.checkip.body) }
-
-# EC2 using AWS CloudFormation EC2 module
-# resource "aws_cloudformation_stack" "public_ec2" {
-#   depends_on = [aws_s3_bucket_object.cfm_ec2_public]
-
-#   name         = "public-ec2"
-#   template_url = format("https://%s.s3.amazonaws.com/%s", module.s3_bucket_salmoncow.id, aws_s3_bucket_object.cfm_ec2_public.id)
-#   tags         = local.tags
-
-#   parameters = {
-#     RegionId    = local.region
-#     VpcIdParm   = module.vpc_one.vpc_id
-#     SubnetId    = module.vpc_one.public_subnet_ids[0]
-#     KeyName     = "aws_salmoncow"
-#     SSHLocation = chomp(data.http.checkip.body)
+# variable "server_ip_configs" {
+#   default = {
+#     mgmt               = { ct = "1" }
+#     applicationgateway = { ct = "1" }
+#     monitor            = { ct = "1" }
+#     app                = { ct = "3" }
 #   }
 # }
-# output cloudformation_ec2_public { value = aws_cloudformation_stack.public_ec2.outputs }
+
+# locals {
+#   server_ip_configs_mapped = flatten([
+#     for server, count in var.server_ip_configs : [
+#       for i in range(count.ct) : {
+#         "name" = join("-", [server, i+1])
+#       }
+#     ]
+#   ])
+# }
+
+# output server_ip_configs_mapped { value = local.server_ip_configs_mapped }
 
 # ------------------------------------------------------------------------------
-# S3: Buckets
+# http provider testing
+# ------------------------------------------------------------------------------
+# data "http" "aws_ips" {
+#   url = "https://ip-ranges.amazonaws.com/ip-ranges.json"
+
+#   request_headers = {
+#     Accept = "application/json"
+#   }
+# }
+
+# # output aws_ips { value = jsondecode(data.http.aws_ips.body)["prefixes"][0]["service"] }
+
+# output aws_ips {
+#   value = distinct([
+#     for item in jsondecode(data.http.aws_ips.body)["prefixes"] :
+#     item["ip_prefix"] if item["service"] == "ROUTE53_HEALTHCHECKS" && item["region"] == "us-east-1"
+#   ])
+# }
+
+
+# data "aws_ip_ranges" "r53_health_checkers" {
+#   regions  = ["us-east-1", "us-west-2"]
+#   services = ["ROUTE53_HEALTHCHECKS"]
+# }
+
+# output r53_health_checkers_cidrs { 
+#     value = data.aws_ip_ranges.r53_health_checkers.cidr_blocks
+# }
+
+# ------------------------------------------------------------------------------
+# playing with for_each and building maps for it
 # ------------------------------------------------------------------------------
 
-# salmoncow
-module "s3_bucket_salmoncow" {
-  source = "../modules/storage/s3/s3_bucket/"
+# variable cgw_configs {
+#   default = {
+#     cgw-id001 = [
+#       ["10.0.0.1/30", "10.0.0.2/30"], # Tunnel pair 1
+#       ["10.0.0.2/30", "10.0.0.3/30"], # Tunnel pair 2
+#       ["10.0.0.4/30", "10.0.0.5/30"], # Tunnel pair 3
+#       ["10.0.0.6/30", "10.0.0.7/30"], # Tunnel pair 4
+#     ],
+#     cgw-id002 = [
+#       ["10.0.0.0/30", "10.0.0.1/30"], # Tunnel pair 1
+#       ["10.0.0.2/30", "10.0.0.3/30"], # Tunnel pair 2
+#       ["10.0.0.4/30", "10.0.0.5/30"], # Tunnel pair 3
+#       ["10.0.0.6/30", "10.0.0.7/30"], # Tunnel pair 4
+#     ],
+#   }
+# }
 
-  ou                            = local.ou
-  use_case                      = local.use_case
-  bucket                        = "salmoncow"
-  versioning                    = true
-  noncurrent_version_expiration = 30
-  base_lifecycle_rule           = true
-  policy                        = data.aws_iam_policy_document.s3_bucket_policy_admin.json
-  tags                          = local.tags
-}
+# locals {
+#   name = "sandbox"
 
-output "s3_salmoncow_id" { value = module.s3_bucket_salmoncow.id }
-output "s3_salmoncow_arn" { value = module.s3_bucket_salmoncow.arn }
+#   private_subnets = { "10.0.1.0/24" = "us-east-1a", "10.0.2.0/24" = "us-east-1b" }
+#   public_subnets  = { "10.0.3.0/24" = "us-east-1c", "10.0.4.0/24" = "us-east-1d" }
+#   #public_subnets = {}
 
-data "aws_iam_policy_document" "s3_bucket_policy_admin" {
-  statement {
-    sid       = "adminS3"
-    actions   = ["s3:*"]
-    resources = ["arn:aws:s3:::salmoncow/*"]
-    principals {
-      type        = "AWS"
-      identifiers = [aws_iam_role.admin_role.arn]
-    }
-  }
-}
+#   is_public = local.public_subnets != {} ? { (data.aws_region.current.name) = local.name } : {}
+
+#   nat_routes = tostring(zipmap(keys(local.public_subnets), keys(local.private_subnets))["10.0.3.0/24"])
+
+
+#   # ---------------------------------------------------
+#   build_vpn = true # get rid of this. the for_each won't run if you pass it an empty map
+
+#   listmap = [
+#     for cgw_id, tunnels in var.cgw_configs : {
+#       for index, ips in tunnels :
+#       format("%s-vpntunnel-%s", cgw_id, index) =>
+#       length(ips) % 2 == 0 ? [format("%s", cgw_id), ips] # If two IPs are passed in, use them
+#       : [format("%s", cgw_id), ["", ""]]                 # Else create two null IPs and hope for the best
+#     }
+#   ]
+
+
+  /*
+    cgw_ids = ["cgw-id001", "cgw-id002"]
+    cgw1_vpn_tunnel1_ips = ["10.0.0.0", "10.0.0.2", "10.0.0.4", "10.0.0.6"]
+    cgw1_vpn_tunnel2_ips = ["10.0.0.4", "10.0.0.6", "10.0.0.5", "10.0.0.7"]
+
+    cgw2_vpn_tunnel1_ips = ["10.0.1.0", "10.0.1.2", "10.0.1.4", "10.0.1.6"]
+    cgw2_vpn_tunnel2_ips = ["10.0.1.1", "10.0.1.3", "10.0.1.5", "10.0.1.7"]
+
+    vpn_connections = 4
+    #vpn_connections = length(local.cgw1_vpn_tunnel1_ips)
+
+    listmap = local.build_vpn ? [
+        for index, cgw in local.cgw_ids: {
+            for vpns in range(local.vpn_connections):
+                format("%s-vpn-%s", cgw, vpns) => 
+                    index == 0 ? [ format("%s", cgw), [local.cgw1_vpn_tunnel1_ips[vpns], local.cgw1_vpn_tunnel2_ips[vpns]] ]
+                               : [ format("%s", cgw), [local.cgw2_vpn_tunnel1_ips[vpns], local.cgw2_vpn_tunnel2_ips[vpns]] ]
+        }
+    ] : []
+    */
+
+
+  # Need to use this until the bug is fixed where input variables have an invalid type.
+  # Once the bug is fixed, use this:   map = merge(local.listmap...)
+  # map = length(local.listmap) == 2 ? merge(local.listmap[0], local.listmap[1]) : merge(local.listmap[0])
+# }
+
+# output "nat_routes" { value = local.nat_routes }
+
+# output "listmap" { value = local.listmap } 
+
+# output "map" { value = local.map }

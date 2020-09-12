@@ -27,9 +27,9 @@ resource "aws_s3_bucket" "s3_bucket" {
     }
   }
 
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 
   tags = merge(
     {
