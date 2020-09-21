@@ -10,16 +10,16 @@ data "aws_iam_account_alias" "current" {}
 # Lambda: Remove Default VPC
 # ------------------------------------------------------------------------------
 
-# NOTE: archive_file on Windows causes a permissions error when executing the lambda even though permissions are -rwxrwxrwx
-#       To get around this use WSL to run the terraform locally
-#       Build the binary: go build -o bin/main bin/main.go
+# NOTE: archive_file resource is causing permissions errors where, depending on where this runs, the permissions
+#       will not transfer (i.e. executable is either there or it isn't). Manually zipping for the time being.
+# Build the binary: go build -o bin/main bin/main.go
 
-data "archive_file" "lambda_function" {
-  type        = "zip"
+# data "archive_file" "lambda_function" {
+#   type        = "zip"
 
-  source_dir  = "${path.module}/bin"
-  output_path = "${path.module}/main.zip"
-}
+#   source_dir  = "${path.module}/bin"
+#   output_path = "${path.module}/main.zip"
+# }
 
 # remove_default_vpc
 resource "aws_lambda_function" "remove_default_vpc" {
@@ -28,7 +28,7 @@ resource "aws_lambda_function" "remove_default_vpc" {
   description      = "Remove the Default VPC in all AWS Regions"
   role             = aws_iam_role.remove_default_vpc_role.arn # ec2 AssumeRole policy
   handler          = "main"
-  source_code_hash = data.archive_file.lambda_function.output_base64sha256
+  # source_code_hash = data.archive_file.lambda_function.output_base64sha256
   runtime          = "go1.x"
   timeout          = "30"
   tags             = var.tags
