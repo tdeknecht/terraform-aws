@@ -11,7 +11,7 @@ data "archive_file" "lambda_function" {
 # remove_default_vpc
 resource "aws_lambda_function" "remove_default_vpc" {
   filename         = "${path.module}/remove_default_vpc.zip"
-  function_name    = "remove_default_vpc"
+  function_name    = "${var.ou}-${var.use_case}-remove-default-vpc"
   description      = "Remove the Default VPC in all AWS Regions"
   role             = aws_iam_role.remove_default_vpc_role.arn
   handler          = "remove_default_vpc.lambda_handler"
