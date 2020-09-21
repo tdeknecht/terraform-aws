@@ -12,19 +12,20 @@ data "aws_iam_account_alias" "current" {}
 
 data "archive_file" "lambda_function" {
   type        = "zip"
-  source_file = "${path.module}/removeDefaultVpc.go"
-  output_path = "${path.module}/removeDefaultVpc.zip"
+  source_file = "${path.module}/bin/main" # export GOOS=linux && go build -ldflags="-s -w" -o bin/main bin/main.go
+  output_path = "${path.module}/main.zip"
 }
 
 # remove_default_vpc
 resource "aws_lambda_function" "remove_default_vpc" {
-  filename         = "${path.module}/removeDefaultVpc.zip"
+  filename         = "${path.module}/main.zip"
   function_name    = "${var.ou}-${data.aws_iam_account_alias.current.account_alias}-remove-default-vpc"
   description      = "Remove the Default VPC in all AWS Regions"
   role             = aws_iam_role.remove_default_vpc_role.arn # ec2 AssumeRole policy
-  handler          = "remove_default_vpc.lambda_handler"
+  handler          = "main"
   source_code_hash = data.archive_file.lambda_function.output_base64sha256
   runtime          = "go1.x"
+  timeout          = "30"
   tags             = var.tags
 }
 
@@ -80,4 +81,20 @@ resource "aws_iam_role" "remove_default_vpc_role" {
 resource "aws_iam_role_policy_attachment" "remove_default_vpc_policy_attachment" {
   role       = aws_iam_role.remove_default_vpc_role.name
   policy_arn = aws_iam_policy.remove_default_vpc.arn
+}
+
+# lambdaBasicsExecutionRole policy attachment (allows writing to CloudWatch Logs)
+resource "aws_iam_role_policy_attachment" "lambda_basic_execution_policy_attachment" {
+  role       = aws_iam_role.remove_default_vpc_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+# ------------------------------------------------------------------------------
+# CloudWatch: log group
+# ------------------------------------------------------------------------------
+
+resource "aws_cloudwatch_log_group" "remove_default_vpc" {
+  name              = "/aws/lambda/${var.ou}-${data.aws_iam_account_alias.current.account_alias}-remove-default-vpc"
+  retention_in_days = 7
+  tags              = var.tags
 }
