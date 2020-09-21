@@ -10,9 +10,13 @@ data "aws_iam_account_alias" "current" {}
 # Lambda: Remove Default VPC
 # ------------------------------------------------------------------------------
 
+# NOTE: archive_file on Windows causes a permissions error when executing the lambda even though permissions are -rwxrwxrwx
+#       To get around this use WSL to run the terraform locally
+#       Build the binary: go build -o bin/main bin/main.go
+
 data "archive_file" "lambda_function" {
   type        = "zip"
-  source_file = "${path.module}/bin/main" # export GOOS=linux && go build -ldflags="-s -w" -o bin/main bin/main.go
+  source_file = "${path.module}/bin/main"
   output_path = "${path.module}/main.zip"
 }
 
