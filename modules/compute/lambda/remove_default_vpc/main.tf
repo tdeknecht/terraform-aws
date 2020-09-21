@@ -1,4 +1,12 @@
 # ------------------------------------------------------------------------------
+# Data
+# ------------------------------------------------------------------------------
+
+data "aws_caller_identity" "current" {}
+
+data "aws_iam_account_alias" "current" {}
+
+# ------------------------------------------------------------------------------
 # Lambda: Remove Default VPC
 # ------------------------------------------------------------------------------
 
@@ -10,10 +18,10 @@ data "archive_file" "lambda_function" {
 
 # remove_default_vpc
 resource "aws_lambda_function" "remove_default_vpc" {
-  filename         = "${path.module}/remove_default_vpc.zip"
-  function_name    = "${var.ou}-${var.use_case}-remove-default-vpc"
+  filename         = "${path.module}/removeDefaultVpc.zip"
+  function_name    = "${var.ou}-${data.aws_iam_account_alias.current.account_alias}-remove-default-vpc"
   description      = "Remove the Default VPC in all AWS Regions"
-  role             = aws_iam_role.remove_default_vpc_role.arn
+  role             = aws_iam_role.remove_default_vpc_role.arn # ec2 AssumeRole policy
   handler          = "remove_default_vpc.lambda_handler"
   source_code_hash = data.archive_file.lambda_function.output_base64sha256
   runtime          = "go1.x"
@@ -27,13 +35,26 @@ resource "aws_lambda_alias" "remove_default_vpc_alias" {
 }
 
 # ------------------------------------------------------------------------------
-# IAM: Policy document, role
+# IAM: Policy document, policy, attachment, role
 # ------------------------------------------------------------------------------
 
-# policy doc
-data "aws_iam_policy_document" "remove_default_vpc_policy" {
+# assumerole policy doc
+data "aws_iam_policy_document" "remove_default_vpc_assumerole" {
   statement {
-    sid    = "removeDefaultVpcRole"
+    sid     = "removeDefaultVpcAssumeRolePolicy"
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
+}
+
+# lambda role policy doc
+data "aws_iam_policy_document" "remove_default_vpc" {
+  statement {
+    sid    = "removeDefaultVpcPolicy"
     effect = "Allow"
     actions = [
       "ec2:*",
@@ -42,8 +63,21 @@ data "aws_iam_policy_document" "remove_default_vpc_policy" {
   }
 }
 
-# role
+# lambda role policy
+resource "aws_iam_policy" "remove_default_vpc" {
+  name        = "${var.ou}-${data.aws_iam_account_alias.current.account_alias}-remove-default-vpc-policy"
+  description = "Remove Default VPC policy"
+  policy      = data.aws_iam_policy_document.remove_default_vpc.json
+}
+
+# lambda role
 resource "aws_iam_role" "remove_default_vpc_role" {
-  name               = "removeDefaultVpcRole"
-  assume_role_policy = data.aws_iam_policy_document.remove_default_vpc_policy.json
+  name               = "${var.ou}-${data.aws_iam_account_alias.current.account_alias}-remove-default-vpc-role"
+  assume_role_policy = data.aws_iam_policy_document.remove_default_vpc_assumerole.json
+}
+
+# lambda role policy attachment
+resource "aws_iam_role_policy_attachment" "remove_default_vpc_policy_attachment" {
+  role       = aws_iam_role.remove_default_vpc_role.name
+  policy_arn = aws_iam_policy.remove_default_vpc.arn
 }
