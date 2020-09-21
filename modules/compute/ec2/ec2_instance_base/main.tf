@@ -56,7 +56,7 @@ resource "aws_security_group" "allow_ssh" {
   vpc_id      = data.aws_subnet.selected.vpc_id
   tags = merge(
     {
-      "Name" = "${var.use_case}-${var.ou}-requester-ip-ssh-sg"
+      "Name" = "${var.ou}-${var.use_case}-requester-ip-ssh-sg"
     },
     var.tags
   )
