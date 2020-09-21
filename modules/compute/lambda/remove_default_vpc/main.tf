@@ -16,13 +16,9 @@ data "aws_iam_account_alias" "current" {}
 
 data "archive_file" "lambda_function" {
   type        = "zip"
-  # source_file = "${path.module}/bin/main"
-  output_path = "${path.module}/main.zip"
 
-  source {
-    content  = filesha256("${path.module}/bin/main")
-    filename = "main"
-  }
+  source_dir  = "${path.module}/bin"
+  output_path = "${path.module}/main.zip"
 }
 
 # remove_default_vpc
