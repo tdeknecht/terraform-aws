@@ -12,24 +12,18 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-//MyEvent struct for Lambda Go handler
-type MyEvent struct {
-	Name string `json:"name"`
-}
-
 func main() {
 	lambda.Start(HandleRequest)
 }
 
 //HandleRequest Lambda Go handler
-func HandleRequest(ctx context.Context, name MyEvent) (string, error) {
+func HandleRequest(ctx context.Context) (string, error) {
 	removeDefaultVpcEverywhere()
-	return fmt.Sprintf("Hello %s", name.Name), nil
+	return fmt.Sprintf("Done."), nil
 }
 
-func sessionManager(profile string, region string) *session.Session {
+func sessionManager(region string) *session.Session {
 	sess, err := session.NewSessionWithOptions(session.Options{
-		Profile: profile,
 		Config: aws.Config{
 			Region: aws.String(region),
 		},
@@ -41,7 +35,7 @@ func sessionManager(profile string, region string) *session.Session {
 }
 
 func removeDefaultVpcEverywhere() {
-	sess := sessionManager("default", "us-east-1")
+	sess := sessionManager("us-east-1")
 	ec2svc := ec2.New(sess)
 
 	fmt.Println("Collecting available AWS Regions")
@@ -64,7 +58,7 @@ func removeDefaultVpcEverywhere() {
 
 	for _, region := range describeRegionsResult.Regions {
 		fmt.Printf("Checking %s...\n", *region.RegionName)
-		sess := sessionManager("default", *region.RegionName)
+		sess := sessionManager(*region.RegionName)
 		ec2svc := ec2.New(sess)
 
 		describeVpcsResult, err := ec2svc.DescribeVpcs(

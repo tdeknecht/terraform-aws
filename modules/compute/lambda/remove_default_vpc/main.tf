@@ -23,11 +23,11 @@ data "aws_iam_account_alias" "current" {}
 
 # remove_default_vpc
 resource "aws_lambda_function" "remove_default_vpc" {
-  filename         = "${path.module}/main.zip"
+  filename         = "${path.module}/bin/main.zip"
   function_name    = "${var.ou}-${data.aws_iam_account_alias.current.account_alias}-remove-default-vpc"
   description      = "Remove the Default VPC in all AWS Regions"
   role             = aws_iam_role.remove_default_vpc_role.arn # ec2 AssumeRole policy
-  handler          = "bin/main"
+  handler          = "main"
   # source_code_hash = data.archive_file.lambda_function.output_base64sha256
   source_code_hash = filebase64sha256("${path.module}/bin/main.zip")
   runtime          = "go1.x"
