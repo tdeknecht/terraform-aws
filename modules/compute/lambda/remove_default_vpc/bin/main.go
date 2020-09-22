@@ -23,8 +23,8 @@ func main() {
 
 //HandleRequest Lambda Go handler
 func HandleRequest(ctx context.Context, name MyEvent) (string, error) {
-	// removeDefaultVpcEverywhere()
-	return fmt.Sprintf("Hello %s!", name.Name), nil
+	removeDefaultVpcEverywhere()
+	return fmt.Sprintf("Hello %s", name.Name), nil
 }
 
 func sessionManager(profile string, region string) *session.Session {
