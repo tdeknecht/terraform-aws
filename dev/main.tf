@@ -1,17 +1,17 @@
 
-data "aws_region" "current" {}
-
 provider "aws" {
   region = "us-east-1"
 
   profile = "default"
 }
 
-variable "hello" { default = "world" }
-output "hello" { value = var.hello }
+# data "aws_region" "current" {}
 
-data "http" "checkip" { url = "http://icanhazip.com" }
-output "my_public_ip" { value = "${chomp(data.http.checkip.body)}/32" }
+# variable "hello" { default = "world" }
+# output "hello" { value = var.hello }
+
+# data "http" "checkip" { url = "http://icanhazip.com" }
+# output "my_public_ip" { value = "${chomp(data.http.checkip.body)}/32" }
 
 # ------------------------------------------------------------------------------
 # stack overflow
