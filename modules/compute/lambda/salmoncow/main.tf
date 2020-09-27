@@ -52,13 +52,6 @@ data "aws_iam_policy_document" "salmoncow_assumerole" {
   }
 }
 
-# lambda role policy
-resource "aws_iam_policy" "salmoncow" {
-  name        = "${var.ou}-${data.aws_iam_account_alias.current.account_alias}-salmoncow-policy"
-  description = "salmoncow policy"
-  policy      = data.aws_iam_policy_document.salmoncow_assumerole.json
-}
-
 # lambda role
 resource "aws_iam_role" "salmoncow" {
   name               = "${var.ou}-${data.aws_iam_account_alias.current.account_alias}-salmoncow-role"
@@ -79,4 +72,31 @@ resource "aws_cloudwatch_log_group" "hello_world_go" {
   name              = "/aws/lambda/${var.ou}-${data.aws_iam_account_alias.current.account_alias}-salmoncow"
   retention_in_days = 7
   tags              = var.tags
+}
+
+# ------------------------------------------------------------------------------
+# API Gateway: salmoncow REST API
+# ------------------------------------------------------------------------------
+
+resource "aws_api_gateway_rest_api" "salmoncow" {
+  name        = "${var.ou}-${data.aws_iam_account_alias.current.account_alias}-salmoncow"
+  description = "A fun API"
+  tags        = var.tags
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+}
+
+resource "aws_api_gateway_resource" "salmoncow" {
+  rest_api_id = aws_api_gateway_rest_api.salmoncow.id
+  parent_id   = aws_api_gateway_rest_api.salmoncow.root_resource_id
+  path_part   = "salmoncow"
+}
+
+resource "aws_api_gateway_method" "salmoncow" {
+  rest_api_id   = aws_api_gateway_rest_api.salmoncow.id
+  resource_id   = aws_api_gateway_resource.salmoncow.id
+  http_method   = "GET"
+  authorization = "NONE"
 }
