@@ -8,14 +8,14 @@ locals {
   # if host (index_document) or redirect (redirect_all_requests_to), it's a website
   # website_type = length(var.index_document) > 0 ? "host" : "redirect"
 
-  website = {
+  website = length(var.index_document) > 0 || length(var.redirect_all_requests_to) > 0 ? { 
     "config" = {
       "index_document" = var.index_document,
       "error_document" = var.error_document,
       "routing_rules"  = var.routing_rules,
       "redirect_all_requests_to" = var.redirect_all_requests_to,
     }
-  }
+  } : {}
 }
 
 # ------------------------------------------------------------------------------
