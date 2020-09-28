@@ -4,20 +4,6 @@
 
 data "aws_region" "current" {}
 
-locals {
-  # if host (index_document) or redirect (redirect_all_requests_to), it's a website
-  # website_type = length(var.index_document) > 0 ? "host" : "redirect"
-
-  website = length(var.index_document) > 0 || length(var.redirect_all_requests_to) > 0 ? { 
-    "config" = {
-      "index_document" = var.index_document,
-      "error_document" = var.error_document,
-      "routing_rules"  = var.routing_rules,
-      "redirect_all_requests_to" = var.redirect_all_requests_to,
-    }
-  } : {}
-}
-
 # ------------------------------------------------------------------------------
 # S3 bucket
 # ------------------------------------------------------------------------------
@@ -33,13 +19,13 @@ resource "aws_s3_bucket" "s3_bucket" {
   }
 
   dynamic "website" {
-    for_each = local.website
+    for_each = length(var.index_document) > 0 || length(var.redirect_all_requests_to) > 0 ? toset([true]) : []
 
     content {
-      index_document           = website.value.index_document
-      error_document           = website.value.error_document
-      redirect_all_requests_to = website.value.redirect_all_requests_to
-      routing_rules            = website.value.routing_rules
+      index_document           = length(var.index_document) > 0 ? var.index_document : null
+      error_document           = length(var.error_document) > 0 ? var.error_document : null
+      redirect_all_requests_to = length(var.redirect_all_requests_to) > 0 ? var.redirect_all_requests_to : null
+      routing_rules            = length(var.routing_rules) > 0 ? var.routing_rules : null
     }
   }
 

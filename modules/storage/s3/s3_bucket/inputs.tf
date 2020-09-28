@@ -104,11 +104,11 @@ variable "error_document" {
 variable "redirect_all_requests_to" {
   description = "(Optional) A hostname to redirect all website requests for this bucket to."
   type        = string
-  default     = null
+  default     = ""
 }
 
 variable "routing_rules" {
   description = "Optional) A json array containing routing rules describing redirect behavior and when redirects are applied."
   type        = string
-  default     = null
+  default     = ""
 }
