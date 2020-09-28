@@ -63,26 +63,52 @@ variable "mfa_delete" {
   default     = false
 }
 
+# public access
 variable "block_public_acls" {
   description = "(Optional) Whether Amazon S3 should block public ACLs for this bucket."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "block_public_policy" {
   description = "(Optional) Whether Amazon S3 should block public bucket policies for this bucket."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "ignore_public_acls" {
   description = "(Optional) Whether Amazon S3 should ignore public ACLs for this bucket."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "restrict_public_buckets" {
   description = " (Optional) Whether Amazon S3 should restrict public bucket policies for this bucket."
   type        = bool
-  default     = false
+  default     = true
+}
+
+# website
+variable "index_document" {
+  description = "(Required, unless using `redirect_all_requests_to`) Amazon S3 returns this index document when requests are made to the root domain or any of the subfolders."
+  type        = string
+  default     = ""
+}
+
+variable "error_document" {
+  description = "(Optional) An absolute path to the document to return in case of a 4XX error."
+  type        = string
+  default     = ""
+}
+
+variable "redirect_all_requests_to" {
+  description = "(Optional) A hostname to redirect all website requests for this bucket to."
+  type        = string
+  default     = null
+}
+
+variable "routing_rules" {
+  description = "Optional) A json array containing routing rules describing redirect behavior and when redirects are applied."
+  type        = string
+  default     = null
 }

@@ -1,4 +1,24 @@
 # ------------------------------------------------------------------------------
+# data, variables, locals, etc.
+# ------------------------------------------------------------------------------
+
+data "aws_region" "current" {}
+
+locals {
+  # if host (index_document) or redirect (redirect_all_requests_to), it's a website
+  # website_type = length(var.index_document) > 0 ? "host" : "redirect"
+
+  website = {
+    "config" = {
+      "index_document" = var.index_document,
+      "error_document" = var.error_document,
+      "routing_rules"  = var.routing_rules,
+      "redirect_all_requests_to" = var.redirect_all_requests_to,
+    }
+  }
+}
+
+# ------------------------------------------------------------------------------
 # S3 bucket
 # ------------------------------------------------------------------------------
 
@@ -10,6 +30,17 @@ resource "aws_s3_bucket" "s3_bucket" {
   versioning {
     enabled    = var.versioning
     mfa_delete = var.mfa_delete
+  }
+
+  dynamic "website" {
+    for_each = local.website
+
+    content {
+      index_document           = website.value.index_document
+      error_document           = website.value.error_document
+      redirect_all_requests_to = website.value.redirect_all_requests_to
+      routing_rules            = website.value.routing_rules
+    }
   }
 
   lifecycle_rule {
