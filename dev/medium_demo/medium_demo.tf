@@ -17,7 +17,7 @@ variable "aws_account_admin" {
 # MODULE IMPORT
 
 # module "iam" {
-#   source = "../modules/iam/medium_demo"
+#   source = "modules/iam"
 
 #   pgp_key = "keybase:${var.aws_account_admin}"
 #   user_name = ["bill", "sady", "tom"]
