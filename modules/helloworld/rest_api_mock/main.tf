@@ -145,7 +145,6 @@ resource "aws_api_gateway_integration_response" "get_500" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.resource.id
   http_method = aws_api_gateway_method.get.http_method
-  # status_code = "500"
   status_code = aws_api_gateway_method_response.get_500.status_code
 
   selection_pattern = "5\\d{2}"
