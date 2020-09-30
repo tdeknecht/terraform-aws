@@ -61,6 +61,10 @@ resource "aws_api_gateway_rest_api" "api" {
     vpc_endpoint_ids = length(var.vpc_endpoint_ids) > 0 ? var.vpc_endpoint_ids : null
   }
   policy = length(var.vpc_endpoint_ids) > 0 ? data.aws_iam_policy_document.private_api[0].json : null
+
+  lifecycle {
+    ignore_changes = [policy]
+  }
 }
 
 resource "aws_api_gateway_resource" "resource" {
@@ -141,8 +145,8 @@ resource "aws_api_gateway_integration_response" "get_500" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.resource.id
   http_method = aws_api_gateway_method.get.http_method
-  status_code = "500"
-  # status_code = aws_api_gateway_method_response.get_500.status_code
+  # status_code = "500"
+  status_code = aws_api_gateway_method_response.get_500.status_code
 
   selection_pattern = "5\\d{2}"
   response_templates = {
