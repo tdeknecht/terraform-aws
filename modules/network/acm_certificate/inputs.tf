@@ -2,7 +2,12 @@
 # Required inputs
 # ------------------------------------------------------------------------------
 
-variable "domain_name" {
+variable "ou" {
+  description = "(Required) A logical identifier for the Organizational Unit."
+  type        = string
+}
+
+variable "certificate_domain_name" {
   description = " (Required) A domain name for which the certificate should be issued"
   type        = string
 }
@@ -27,4 +32,28 @@ variable "subject_alternative_names" {
   default     = []
 }
 
+variable "validation_domain_name" {
+  description = " (Optional) A Route 53 domain name for which validation records will be placed"
+  type        = string
+  default     = null
+}
 
+# imported cert
+
+variable "private_key" {
+  description = "(Required) The certificate's PEM-formatted private key"
+  type        = string
+  default     = null
+}
+
+variable "certificate_body" {
+  description = "(Required) The certificate's PEM-formatted public key"
+  type        = string
+  default     = null
+}
+
+variable "certificate_chain" {
+  description = "(Optional) The certificate's PEM-formatted chain"
+  type        = string
+  default     = null
+}

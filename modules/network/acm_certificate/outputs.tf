@@ -2,12 +2,7 @@
 # Outputs
 # ------------------------------------------------------------------------------
 
-output "zone_id" {
-  description = "The Hosted Zone ID. This can be referenced by zone records."
-  value       = aws_route53_zone.zone.id
-}
-
-output "name_servers" {
-  description = "A list of name servers in associated (or default) delegation set."
-  value       = aws_route53_zone.zone.name_servers
+output "certificate_arn" {
+  description = "The ARN of the validated certificate."
+  value       = aws_acm_certificate_validation.validation.certificate_arn
 }
