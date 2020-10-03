@@ -8,7 +8,7 @@ variable "ou" {
 }
 
 variable "certificate_domain_name" {
-  description = " (Required) A domain name for which the certificate should be issued"
+  description = "(Required) A domain name for which the certificate should be issued"
   type        = string
 }
 
