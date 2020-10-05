@@ -21,3 +21,8 @@ output "hosted_zone_id" {
   description = "The Route 53 Hosted Zone ID for this bucket's region."
   value       = aws_s3_bucket.s3_bucket.hosted_zone_id
 }
+
+output "website_domain" {
+  description = "he domain of the website endpoint, if the bucket is configured with a website. If not, this will be an empty string."
+  value       = aws_s3_bucket.s3_bucket.website_domain
+}
