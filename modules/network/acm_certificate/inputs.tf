@@ -33,7 +33,7 @@ variable "subject_alternative_names" {
 }
 
 variable "validation_domain_name" {
-  description = " (Optional) A Route 53 domain name for which validation records will be placed"
+  description = "(Optional) A Route 53 domain name for which validation records will be placed"
   type        = string
   default     = null
 }
