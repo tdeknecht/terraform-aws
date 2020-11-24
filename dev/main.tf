@@ -5,6 +5,8 @@ provider "aws" {
   profile = "default"
 }
 
+# output "location" { value = element(split("/", path.cwd), length(split("/", path.cwd))-1) }
+
 # data "aws_region" "current" {}
 
 # variable "hello" { default = "world" }
