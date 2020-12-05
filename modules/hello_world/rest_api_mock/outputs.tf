@@ -17,7 +17,7 @@ output "deployment_stage_name" {
   value       = aws_api_gateway_deployment.deployment.stage_name
 }
 
-output "deployment_invoke_urle" {
+output "deployment_invoke_url" {
   description = "The URL to invoke the API pointing to the stage"
   value       = aws_api_gateway_deployment.deployment.invoke_url
 }
