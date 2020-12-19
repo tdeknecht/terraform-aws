@@ -48,6 +48,18 @@ resource "aws_s3_bucket" "s3_bucket" {
   #   prevent_destroy = true
   # }
 
+  dynamic "cors_rule" {
+  for_each = length(var.cors_allowed_methods) > 0 && length(var.cors_allowed_origins) > 0 ? toset([true]) : []
+
+    content {
+      allowed_headers = var.cors_allowed_headers
+      allowed_methods = var.cors_allowed_methods
+      allowed_origins = var.cors_allowed_origins
+      expose_headers  = var.cors_expose_headers
+      max_age_seconds = var.cors_max_age_seconds
+    }
+  }
+
   tags = merge(
     {
       "Name" = "${var.use_case}-${var.ou}-${data.aws_region.current.name}"

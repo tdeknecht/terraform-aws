@@ -112,3 +112,35 @@ variable "routing_rules" {
   type        = string
   default     = ""
 }
+
+# CORS
+
+variable "cors_allowed_headers" {
+  description = "(Optional) Specifies which headers are allowed."
+  type        = list(string)
+  default     = null
+}
+
+variable "cors_allowed_methods" {
+  description = "(Required) Specifies which methods are allowed. Can be GET, PUT, POST, DELETE or HEAD."
+  type        = list(string)
+  default     = []
+}
+
+variable "cors_allowed_origins" {
+  description = "(Required) Specifies which origins are allowed."
+  type        = list(string)
+  default     = []
+}
+
+variable "cors_expose_headers" {
+  description = "(Optional) Specifies expose header in the response."
+  type        = list(string)
+  default     = null
+}
+
+variable "cors_max_age_seconds" {
+  description = "(Optional) Specifies time in seconds that browser can cache the response for a preflight request."
+  type        = number
+  default     = null
+}
