@@ -1,8 +1,6 @@
 import json
 
-def lambda_handler(event, context):
-    print("In lambda handler")
-    
+def lambda_handler(event, context):   
     resp = {
         "statusCode": 200,
         "headers": {

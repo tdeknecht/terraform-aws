@@ -54,6 +54,7 @@ data "aws_iam_policy_document" "hello_world_assumerole" {
 resource "aws_iam_role" "hello_world_role" {
   name               = "${var.ou}-${data.aws_iam_account_alias.current.account_alias}-hello-world-py3-role"
   assume_role_policy = data.aws_iam_policy_document.hello_world_assumerole.json
+  tags               = var.tags
 }
 
 resource "aws_lambda_permission" "apigw" {
