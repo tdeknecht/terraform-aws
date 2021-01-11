@@ -1,8 +1,20 @@
-
 provider "aws" {
   region  = "us-east-1"
   profile = "default"
 }
+
+# ------------------------------------------------------------------------------
+# Random simple stuff
+# ------------------------------------------------------------------------------
+
+# output "location" { value = element(split("/", path.cwd), length(split("/", path.cwd))-1) }
+
+# variable "hello" { default = "world" }
+# output "hello" { value = var.hello }
+
+# data "http" "checkip" { url = "http://icanhazip.com" }
+# output "my_public_ip" { value = "${chomp(data.http.checkip.body)}/32" }
+
 
 # ------------------------------------------------------------------------------
 # stack overflow: https://stackoverflow.com/questions/65569177/how-to-iterate-through-nested-list-of-objects-in-terraform
@@ -83,21 +95,6 @@ provider "aws" {
 #       cm-file.url => cm-file.data-keyname
 #   }
 # }
-
-
-# ------------------------------------------------------------------------------
-# Random simple stuff
-# ------------------------------------------------------------------------------
-
-# output "location" { value = element(split("/", path.cwd), length(split("/", path.cwd))-1) }
-
-# data "aws_region" "current" {}
-
-# variable "hello" { default = "world" }
-# output "hello" { value = var.hello }
-
-# data "http" "checkip" { url = "http://icanhazip.com" }
-# output "my_public_ip" { value = "${chomp(data.http.checkip.body)}/32" }
 
 
 # ------------------------------------------------------------------------------
