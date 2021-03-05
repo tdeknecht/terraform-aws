@@ -37,12 +37,13 @@ resource "aws_iam_user_group_membership" "membership" {
   ]
 }
 
-output "password" {
-  value = [
+output "passwords" {
+  value = {
       for user in var.user_name :
-        aws_iam_user_login_profile.profile[user].encrypted_password
-  ]
+        user => aws_iam_user_login_profile.profile[user].encrypted_password
+  }
 }
+
 
 # MODULE RESOURCES count
 

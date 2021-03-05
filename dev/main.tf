@@ -17,112 +17,6 @@ provider "aws" {
 
 
 # ------------------------------------------------------------------------------
-# stack overflow: https://stackoverflow.com/questions/65569177/how-to-iterate-through-nested-list-of-objects-in-terraform
-# ------------------------------------------------------------------------------
-
-# locals {
-#   urls = toset(flatten([
-#     for cm in var.cloud-configmap : [
-#       for cm-file in cm.cm-files :
-#         format("https://%s", cm-file.url)
-#     ]
-#   ]))
-# }
-# output "urls" { value = local.urls }
-
-# variable "cloud-configmap" {
-#   type = map(object({
-#     name = string
-#     namespace = string
-#     cm-files = list(object({
-#       url = string
-#       data-keyname = string 
-#     }))
-#   }))
-#   default = {
-#     "cm1" = {
-#       name = "cm-name"
-#       namespace = "testnamespace"
-#       cm-files = [{
-#         url = "someurl.com/file1.yaml"
-#         data-keyname = "file1.yml"
-#       },
-#       {
-#         url = "someurl.com/file2.yaml"
-#         data-keyname = "file2.yml"
-#       }]
-#     },
-#     "cm2" = {
-#       name = "cm-name2"
-#       namespace = "default"
-#       cm-files = [{
-#         url = "someurl.com/file3.yaml"
-#         data-keyname = "file3.yml"
-#       },
-#       {
-#         url = "someurl.com/file4.yaml"
-#         data-keyname = "file4.yml"
-#       }]
-#     }
-#   }
-# }
-
-# data "http" "config-map" {
-#   for_each = toset(flatten([
-#     for cm in var.cloud-configmap : [
-#       for cm-file in cm.cm-files :
-#         cm-file.url
-#     ]
-#   ]))
-
-#   url = format("https://%s", each.key)
-
-#   request_headers = {
-#     Accept = "text/plain"
-#   }
-# }
-
-# resource "kubernetes_config_map" "configmap" {
-#   for_each = var.cloud-configmap
-
-#   metadata {
-#     name = each.value.name
-#     namespace = each.value.namespace
-#   }
-
-#   data = {
-#     for cm-file in each.value.cm-files :
-#       cm-file.url => cm-file.data-keyname
-#   }
-# }
-
-
-# ------------------------------------------------------------------------------
-# stack overflow
-# ------------------------------------------------------------------------------
-
-# variable "server_ip_configs" {
-#   default = {
-#     mgmt               = { ct = "1" }
-#     applicationgateway = { ct = "1" }
-#     monitor            = { ct = "1" }
-#     app                = { ct = "3" }
-#   }
-# }
-
-# locals {
-#   server_ip_configs_mapped = flatten([
-#     for server, count in var.server_ip_configs : [
-#       for i in range(count.ct) : {
-#         "name" = join("-", [server, i+1])
-#       }
-#     ]
-#   ])
-# }
-
-# output server_ip_configs_mapped { value = local.server_ip_configs_mapped }
-
-# ------------------------------------------------------------------------------
 # http provider testing
 # ------------------------------------------------------------------------------
 # data "http" "aws_ips" {
@@ -198,7 +92,7 @@ provider "aws" {
 #   ]
 
 
-  /*
+/*
     cgw_ids = ["cgw-id001", "cgw-id002"]
     cgw1_vpn_tunnel1_ips = ["10.0.0.0", "10.0.0.2", "10.0.0.4", "10.0.0.6"]
     cgw1_vpn_tunnel2_ips = ["10.0.0.4", "10.0.0.6", "10.0.0.5", "10.0.0.7"]
@@ -220,9 +114,9 @@ provider "aws" {
     */
 
 
-  # Need to use this until the bug is fixed where input variables have an invalid type.
-  # Once the bug is fixed, use this:   map = merge(local.listmap...)
-  # map = length(local.listmap) == 2 ? merge(local.listmap[0], local.listmap[1]) : merge(local.listmap[0])
+# Need to use this until the bug is fixed where input variables have an invalid type.
+# Once the bug is fixed, use this:   map = merge(local.listmap...)
+# map = length(local.listmap) == 2 ? merge(local.listmap[0], local.listmap[1]) : merge(local.listmap[0])
 # }
 
 # output "nat_routes" { value = local.nat_routes }

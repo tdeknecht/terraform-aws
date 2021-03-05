@@ -1,3 +1,8 @@
+provider "aws" {
+  region  = "us-east-1"
+  profile = "default"
+}
+
 variable "aws_account_admin" {
   type = string
 }
@@ -16,11 +21,13 @@ variable "aws_account_admin" {
 
 # MODULE IMPORT
 
-# module "iam" {
-#   source = "modules/iam"
+module "iam" {
+  source = "./modules/iam"
 
-#   pgp_key = "keybase:${var.aws_account_admin}"
-#   user_name = ["bill", "sady", "tom"]
-#   group_name = "demo"
-#   tags = { "foo" = "bar" }
-# }
+  pgp_key    = "keybase:${var.aws_account_admin}"
+  user_name  = ["bill", "sady"]
+  group_name = "demo"
+  tags       = { "foo" = "bar" }
+}
+
+output "passwords" { value = module.iam.passwords }
