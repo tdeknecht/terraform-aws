@@ -167,9 +167,9 @@ resource "aws_api_gateway_deployment" "deployment" {
 
   # redeploy if code changes
   triggers = {
-    redeployment = sha1(join(",", list(
-      jsonencode(aws_api_gateway_integration.get),
-    )))
+    redeployment = sha1(jsonencode([
+      aws_api_gateway_integration.get,
+    ]))
     # redeployment = sha1(file("./main.tf"))
   }
 

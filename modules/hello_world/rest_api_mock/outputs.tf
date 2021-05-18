@@ -7,6 +7,11 @@ output "rest_api_id" {
   value       = aws_api_gateway_rest_api.api.id
 }
 
+output "resource_path" {
+  description = "The complete path for this API resource, including all parent paths."
+  value       = aws_api_gateway_resource.api_resource.path
+}
+
 output "deployment_id" {
   description = "The ID of the deployment"
   value       = aws_api_gateway_deployment.deployment.id
