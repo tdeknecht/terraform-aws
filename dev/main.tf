@@ -1,32 +1,3 @@
-provider "aws" {
-  region  = "us-east-1"
-  profile = "default"
-}
-
-locals {
-  region   = "us-east-1"
-  ou       = "dev"
-  use_case = "td000"
-
-  tags = {
-    "terraform"  = true
-    "owner"      = "aws-terraform-adhoc"
-    "use_case"   = local.use_case
-  }
-}
-
-
-# helloworld REST API mock
-# module "hello_world_rest_api_mock" {
-# #   source = "git::https://github.com/tdeknecht/aws-terraform//modules/hello_world/rest_api_mock/"
-#   source = "../modules/hello_world/rest_api_mock"
-
-#   ou   = local.ou
-#   name = "helloworldmock"
-#   tags = local.tags
-# }
-# output "rest_api_mock_invoke_url" { value = module.hello_world_rest_api_mock.deployment_invoke_url }
-
 # ------------------------------------------------------------------------------
 # Random simple stuff
 # ------------------------------------------------------------------------------
@@ -39,9 +10,38 @@ locals {
 # data "http" "checkip" { url = "http://icanhazip.com" }
 # output "my_public_ip" { value = "${chomp(data.http.checkip.body)}/32" }
 
+output "test1" { value = local.tags.owner }
+output "test2" { value = local.tags["owner"] }
+output "tags" { value = local.tags }
+
 
 # ------------------------------------------------------------------------------
-# http provider testing
+# CIDR module
+# ------------------------------------------------------------------------------
+
+# module "cidr" {
+#   source = "./cidr"
+# }
+
+
+# ------------------------------------------------------------------------------
+# AWS API Gateway
+# ------------------------------------------------------------------------------
+
+# helloworld REST API mock
+# module "hello_world_rest_api_mock" {
+# #   source = "git::https://github.com/tdeknecht/aws-terraform//modules/hello_world/rest_api_mock/"
+#   source = "../modules/hello_world/rest_api_mock"
+
+#   ou   = local.ou
+#   name = "helloworldmock"
+#   tags = local.tags
+# }
+# output "rest_api_mock_invoke_url" { value = module.hello_world_rest_api_mock.deployment_invoke_url }
+
+
+# ------------------------------------------------------------------------------
+# HTTP provider testing
 # ------------------------------------------------------------------------------
 # data "http" "aws_ips" {
 #   url = "https://ip-ranges.amazonaws.com/ip-ranges.json"
