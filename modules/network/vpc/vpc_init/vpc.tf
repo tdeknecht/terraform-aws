@@ -35,6 +35,7 @@ resource "aws_vpc_ipv4_cidr_block_association" "secondary_cidr" {
 
 # Private subnets
 resource "aws_subnet" "private_subnet" {
+  depends_on = [aws_vpc_ipv4_cidr_block_association.secondary_cidr]
   for_each = var.private_subnets
 
   vpc_id            = aws_vpc.vpc.id
@@ -53,6 +54,7 @@ resource "aws_subnet" "private_subnet" {
 
 # Public subnets
 resource "aws_subnet" "public_subnet" {
+  depends_on = [aws_vpc_ipv4_cidr_block_association.secondary_cidr]
   for_each = var.public_subnets
 
   vpc_id                  = aws_vpc.vpc.id
