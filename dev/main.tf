@@ -10,9 +10,9 @@
 # data "http" "checkip" { url = "http://icanhazip.com" }
 # output "my_public_ip" { value = "${chomp(data.http.checkip.body)}/32" }
 
-output "test1" { value = local.tags.owner }
-output "test2" { value = local.tags["owner"] }
-output "tags" { value = local.tags }
+# output "test1" { value = local.tags.owner }
+# output "test2" { value = local.tags["owner"] }
+# output "tags" { value = local.tags }
 
 
 # ------------------------------------------------------------------------------
