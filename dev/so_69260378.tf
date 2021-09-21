@@ -1,4 +1,4 @@
-variable "vpc_id" { default = "vpc-099dc344bf33d4f3e" }
+variable "vpc_id" { default = "vpc-abc123" }
 variable "create_webserver" { default = 2 }
 variable "name" { default = "so" }
 variable "elb_port" { default = 443 }
@@ -23,7 +23,7 @@ resource "aws_security_group" "elb" {
   vpc_id      = var.vpc_id
   tags = merge(
     {
-      "Name" = "so_69260378"
+      "Name" = var.name
     },
     local.tags
   )
