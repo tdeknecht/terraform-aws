@@ -1,4 +1,4 @@
-variable "vpc_id" { default = "vpc-abc123" }
+variable "vpc_id" {}
 variable "create_webserver" { default = 2 }
 variable "name" { default = "so" }
 variable "elb_port" { default = 443 }
