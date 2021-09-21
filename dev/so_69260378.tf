@@ -1,60 +1,65 @@
-variable "vpc_id" {}
-variable "create_webserver" { default = 2 }
-variable "name" { default = "so" }
-variable "elb_port" { default = 443 }
+# ------------------------------------------------------------------------------
+# stack overflow: https://stackoverflow.com/questions/69260378/how-to-create-string-output-with-splat-operator-in-terraform/
+# ------------------------------------------------------------------------------
 
-data "aws_vpc" "this" {
-  id = var.vpc_id
-}
 
-data "aws_subnet_ids" "default" {
-  vpc_id = var.vpc_id
+# variable "vpc_id" {}
+# variable "create_webserver" { default = 2 }
+# variable "name" { default = "so" }
+# variable "elb_port" { default = 443 }
 
-  tags = {
-    network = "private"
-  }
-}
+# data "aws_vpc" "this" {
+#   id = var.vpc_id
+# }
 
-resource "aws_security_group" "elb" {
-  count = var.create_webserver
+# data "aws_subnet_ids" "default" {
+#   vpc_id = var.vpc_id
 
-  name        = "${var.name}-${count.index}"
-  description = var.name
-  vpc_id      = var.vpc_id
-  tags = merge(
-    {
-      "Name" = var.name
-    },
-    local.tags
-  )
+#   tags = {
+#     network = "private"
+#   }
+# }
 
-  ingress {
-    description = "HTTPS"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = [data.aws_vpc.this.cidr_block]
-  }
-}
+# resource "aws_security_group" "elb" {
+#   count = var.create_webserver
 
-resource "aws_elb" "webserver_example" {
-  count = var.create_webserver
+#   name        = "${var.name}-${count.index}"
+#   description = var.name
+#   vpc_id      = var.vpc_id
+#   tags = merge(
+#     {
+#       "Name" = var.name
+#     },
+#     local.tags
+#   )
 
-  name            = "${var.name}-${count.index}"
-  subnets         = data.aws_subnet_ids.default.ids
-  security_groups = [aws_security_group.elb[count.index].id]
+#   ingress {
+#     description = "HTTPS"
+#     from_port   = 80
+#     to_port     = 80
+#     protocol    = "tcp"
+#     cidr_blocks = [data.aws_vpc.this.cidr_block]
+#   }
+# }
 
-  listener {
-    instance_port     = 8000
-    instance_protocol = "http"
-    lb_port           = 80
-    lb_protocol       = "http"
-  }
-}
+# resource "aws_elb" "webserver_example" {
+#   count = var.create_webserver
 
-output "url" {
-  value = [
-    for dns_name in aws_elb.webserver_example.*.dns_name :
-    format("http://%s:%s", dns_name, var.elb_port)
-  ]
-}
+#   name            = "${var.name}-${count.index}"
+#   subnets         = data.aws_subnet_ids.default.ids
+#   security_groups = [aws_security_group.elb[count.index].id]
+
+#   listener {
+#     instance_port     = 8000
+#     instance_protocol = "http"
+#     lb_port           = 80
+#     lb_protocol       = "http"
+#   }
+# }
+
+# output "url" {
+#   value = [
+#     for dns_name in aws_elb.webserver_example.*.dns_name :
+#     format("http://%s:%s", dns_name, var.elb_port)
+#   ]
+# }
