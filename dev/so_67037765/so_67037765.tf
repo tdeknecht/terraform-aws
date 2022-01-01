@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------------------
+# stack overflow: https://stackoverflow.com/questions/67037765/terraform-how-to-create-optional-data-block
+# ------------------------------------------------------------------------------
+
 variable "arch" {
   type = string
 

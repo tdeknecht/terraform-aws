@@ -2,10 +2,10 @@
 # Random simple stuff
 # ------------------------------------------------------------------------------
 
-# output "location" { value = element(split("/", path.cwd), length(split("/", path.cwd))-1) }
+output "location" { value = element(split("/", path.cwd), length(split("/", path.cwd))-1) }
 
-# variable "hello" { default = "world" }
-# output "hello" { value = var.hello }
+variable "hello" { default = "world" }
+output "hello" { value = var.hello }
 
 # data "http" "checkip" { url = "http://icanhazip.com" }
 # output "my_public_ip" { value = "${chomp(data.http.checkip.body)}/32" }
