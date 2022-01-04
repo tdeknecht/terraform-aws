@@ -4,19 +4,22 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 3.55.0"
     }
-  }
-
-  cloud {
-    organization = "tdeknecht-org"
-    workspaces {
-      tags = ["dev"]
+    tfe = {
+      version = "~> 0.27.0"
     }
   }
 
-  # backend "s3" {
-  #   bucket  = "td000"
-  #   key     = "terraform-state/td000.tfstate"
-  #   region  = "us-east-1"
-  #   profile = "default"
-  # }
+  # requires `terraform login` or CLI config-file:credentials block (https://www.terraform.io/cli/config/config-file#credentials)
+  cloud {
+    organization = "tdeknecht-org"
+
+    workspaces {
+      tags = ["td000", "dev"]
+    }
+  }
+}
+
+resource "tfe_organization" "tdeknecht" {
+  name  = "tdeknecht-org"
+  email = "tdeknecht@gmail.com"
 }

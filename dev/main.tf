@@ -2,7 +2,7 @@
 # Random simple stuff
 # ------------------------------------------------------------------------------
 
-output "location" { value = element(split("/", path.cwd), length(split("/", path.cwd))-1) }
+output "location" { value = element(split("/", path.cwd), length(split("/", path.cwd)) - 1) }
 
 variable "hello" { default = "world" }
 output "hello" { value = var.hello }

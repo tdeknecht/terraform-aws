@@ -1,6 +1,9 @@
 variable "region" {}
 variable "ou" {}
 variable "use_case" {}
+variable "tfe_user_token" {}
+variable "somemap" {}
+output "somemap" { value = var.somemap }
 
 locals {
   region   = var.region
@@ -9,7 +12,8 @@ locals {
 
   tags = {
     "terraform" = true
-    "owner"     = "aws-terraform-adhoc"
+    "owner"     = "aws-terraform"
+    "tenant"    = "dev"
     "use_case"  = var.use_case
     "workspace" = terraform.workspace
   }
