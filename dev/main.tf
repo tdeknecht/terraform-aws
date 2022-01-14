@@ -3,9 +3,13 @@
 # ------------------------------------------------------------------------------
 
 output "location" { value = element(split("/", path.cwd), length(split("/", path.cwd)) - 1) }
+output "location2" { value = path.cwd }
 
 variable "hello" { default = "world" }
 output "hello" { value = var.hello }
+
+variable "somemap" {}
+output "somemap" { value = var.somemap } # `export TF_VAR_somemap='{foo = "bar", baz = "qux"}'`
 
 # data "http" "checkip" { url = "http://icanhazip.com" }
 # output "my_public_ip" { value = "${chomp(data.http.checkip.body)}/32" }

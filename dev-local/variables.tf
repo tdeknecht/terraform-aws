@@ -1,7 +1,6 @@
 variable "region" {}
 variable "ou" {}
 variable "use_case" {}
-variable "tfe_user_token" {}
 
 locals {
   region   = var.region
