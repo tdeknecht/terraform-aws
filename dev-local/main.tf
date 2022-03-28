@@ -14,3 +14,11 @@ resource "null_resource" "cwd" {
     always_run = tostring(timestamp())
   }
 }
+
+# ------------------------------------------------------------------------------
+# https://stackoverflow.com/questions/71645084/terraform-how-can-we-update-a-tag-only-if-modification-is-detected
+# ------------------------------------------------------------------------------
+data "external" "lastupdated" {
+  program = ["bash", "${path.module}/external.sh", "external.sh"]
+}
+output "lastupdated" { value = data.external.lastupdated.result.lastupdated }

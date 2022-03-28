@@ -2,14 +2,14 @@
 # Random simple stuff
 # ------------------------------------------------------------------------------
 
-output "location" { value = element(split("/", path.cwd), length(split("/", path.cwd)) - 1) }
-output "location2" { value = path.cwd }
+# output "location" { value = element(split("/", path.cwd), length(split("/", path.cwd)) - 1) }
+# output "location2" { value = path.cwd }
 
-variable "hello" { default = "world" }
-output "hello" { value = var.hello }
+# variable "hello" { default = "world" }
+# output "hello" { value = var.hello }
 
-variable "somemap" {}
-output "somemap" { value = var.somemap } # `export TF_VAR_somemap='{foo = "bar", baz = "qux"}'`
+# variable "somemap" {}
+# output "somemap" { value = var.somemap } # `export TF_VAR_somemap='{foo = "bar", baz = "qux"}'`
 
 # data "http" "checkip" { url = "http://icanhazip.com" }
 # output "my_public_ip" { value = "${chomp(data.http.checkip.body)}/32" }
@@ -18,6 +18,12 @@ output "somemap" { value = var.somemap } # `export TF_VAR_somemap='{foo = "bar",
 # output "test2" { value = local.tags["owner"] }
 # output "tags" { value = local.tags }
 
+# ------------------------------------------------------------------------------
+# SO answers
+# ------------------------------------------------------------------------------
+
+# module "so_71645084" { source = "./so_71645084" }
+# output "so_71645084" { value = module.so_71645084.common_tags }
 
 # ------------------------------------------------------------------------------
 # CIDR module
