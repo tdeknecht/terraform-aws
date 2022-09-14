@@ -16,10 +16,6 @@ resource "aws_route53_zone" "zone" {
       vpc_region = vpc.value
     }
   }
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "aws_route53_zone_association" "secondary" {
