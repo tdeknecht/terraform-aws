@@ -5,7 +5,7 @@
 # output "location" { value = element(split("/", path.cwd), length(split("/", path.cwd)) - 1) }
 # output "location2" { value = path.cwd }
 
-# variable "hello" { default = "world" }
+variable "hello" { default = "world" }
 # output "hello" { value = var.hello }
 
 # variable "somemap" {}
