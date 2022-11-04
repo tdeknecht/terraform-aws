@@ -6,7 +6,7 @@
 # output "location2" { value = path.cwd }
 
 variable "hello" { default = "world" }
-# output "hello" { value = var.hello }
+output "hello" { value = var.hello }
 
 # variable "somemap" {}
 # output "somemap" { value = var.somemap } # `export TF_VAR_somemap='{foo = "bar", baz = "qux"}'`
