@@ -8,10 +8,3 @@ provider "registry.terraform.io/hashicorp/aws" {
     "h1:pQzssRQ6BMdyO65Lq5PRx766l8swjcCNKrNyCkcJa6I=",
   ]
 }
-
-provider "registry.terraform.io/hashicorp/tfe" {
-  version = "0.27.0"
-  hashes = [
-    "h1:Xnt/5UqSPsMQ1GZ1aR9syF7SGH6wJ/Flk7Py1FGBovA=",
-  ]
-}
