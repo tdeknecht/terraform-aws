@@ -8,11 +8,6 @@
 variable "hello" { default = "world" }
 output "hello" { value = var.hello }
 
-resource "aws_iam_user" "test" {
-  name = "td001-dev-scalr-deployer"
-  path = "/test/"
-}
-
 # variable "somemap" {}
 # output "somemap" { value = var.somemap } # `export TF_VAR_somemap='{foo = "bar", baz = "qux"}'`
 
