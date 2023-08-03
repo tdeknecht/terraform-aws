@@ -9,7 +9,7 @@ locals {
 
   tags = {
     "terraform" = true
-    "owner"     = "aws-terraform"
+    "owner"     = "/terraform-aws/dev"
     "tenant"    = "dev"
     "use_case"  = var.use_case
     "workspace" = terraform.workspace
