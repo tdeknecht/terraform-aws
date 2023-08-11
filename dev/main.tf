@@ -53,15 +53,15 @@ output "hello" { value = var.hello }
 # ------------------------------------------------------------------------------
 # HTTP provider testing
 # ------------------------------------------------------------------------------
-# data "http" "aws_ips" {
-#   url = "https://ip-ranges.amazonaws.com/ip-ranges.json"
+data "http" "aws_ips" {
+  url = "https://ip-ranges.amazonaws.com/ip-ranges.json"
 
-#   request_headers = {
-#     Accept = "application/json"
-#   }
-# }
+  request_headers = {
+    Accept = "application/json"
+  }
+}
 
-# # output aws_ips { value = jsondecode(data.http.aws_ips.body)["prefixes"][0]["service"] }
+# output aws_ips { value = jsondecode(data.http.aws_ips.body)["prefixes"][0]["service"] }
 
 # output aws_ips {
 #   value = distinct([
