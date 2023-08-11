@@ -61,7 +61,7 @@ data "http" "aws_ips" {
   }
 }
 
-# output aws_ips { value = jsondecode(data.http.aws_ips.body)["prefixes"][0]["service"] }
+output aws_ips { value = jsondecode(data.http.aws_ips.body)["prefixes"][0]["service"] }
 
 # output aws_ips {
 #   value = distinct([
