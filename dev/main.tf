@@ -2,6 +2,9 @@
 # Random simple stuff
 # ------------------------------------------------------------------------------
 
+data "scalr_current_account" "account" {}
+output "scalr_current_account_name" { value = data.scalr_current_account.name }
+
 # output "location" { value = element(split("/", path.cwd), length(split("/", path.cwd)) - 1) }
 # output "location2" { value = path.cwd }
 
